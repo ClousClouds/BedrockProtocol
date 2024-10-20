@@ -1,10 +1,11 @@
 {
-    "name": "pocketmine/bedrock-protocol",
+    "name": "clousclouds/minecraft-bedrock-protocol",
     "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
     "type": "library",
     "require": {
         "php": "^8.1",
         "ext-json": "*",
+		"ext-pmmpthread": "*",
         "pocketmine/binaryutils": "^0.2.0",
         "pocketmine/color": "^0.2.0 || ^0.3.0",
         "pocketmine/math": "^0.3.0 || ^0.4.0 || ^1.0.0",
