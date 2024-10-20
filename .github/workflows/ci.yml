@@ -27,7 +27,7 @@ jobs:
           restore-keys: "php-${{ matrix.php }}-composer-"
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction
+        run: composer install --prefer-dist --no-interaction --ignore-platform-req=*
 
       - name: Run PHPStan
         run: ./vendor/bin/phpstan analyze --no-progress
@@ -60,7 +60,7 @@ jobs:
           restore-keys: "php-${{ matrix.php }}-composer-"
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction
+        run: composer install --prefer-dist --no-interaction --ignore-platform-req=*
 
       - name: Verify ::create() methods are up to date
         run: |
