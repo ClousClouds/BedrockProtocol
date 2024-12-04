@@ -425,6 +425,4 @@ interface PacketHandlerInterface{
 	public function handleMovementEffect(MovementEffectPacket $packet) : bool;
 
 	public function handleSetMovementAuthority(SetMovementAuthorityPacket $packet) : bool;
-
-	public function handleUpdateSettings(UpdateSettingsPacket $packet) : bool;
 }
