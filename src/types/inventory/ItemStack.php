@@ -22,9 +22,9 @@ final class ItemStack implements \JsonSerializable{
 	 * @see ItemStackExtraData::write()
 	 */
 	public function __construct(
-		private int $itemId,
+		private int $id,
 		private int $meta,
-		private int $itemCount,
+		private int $count,
 		private int $blockRuntimeId,
 		private string $rawExtraData,
 	){}
@@ -37,16 +37,16 @@ final class ItemStack implements \JsonSerializable{
 		return $this->id === 0;
 	}
 
-	public function getItemId() : int{
-		return $this->itemId;
+	public function getId() : int{
+		return $this->id;
 	}
 
 	public function getMeta() : int{
 		return $this->meta;
 	}
 
-	public function getItemCount() : int{
-		return $this->itemCount;
+	public function getCount() : int{
+		return $this->count;
 	}
 
 	public function getBlockRuntimeId() : int{ return $this->blockRuntimeId; }
@@ -66,7 +66,7 @@ final class ItemStack implements \JsonSerializable{
 
 	public function equalsWithoutCount(ItemStack $itemStack) : bool{
 		return
-			$this->itemId === $itemStack->itemId &&
+			$this->id === $itemStack->id &&
 			$this->meta === $itemStack->meta &&
 			$this->blockRuntimeId === $itemStack->blockRuntimeId &&
 			$this->rawExtraData === $itemStack->rawExtraData;
@@ -75,9 +75,9 @@ final class ItemStack implements \JsonSerializable{
 	/** @return mixed[] */
 	public function jsonSerialize() : array{
 		return [
-			"id" => $this->itemId,
+			"id" => $this->id,
 			"meta" => $this->meta,
-			"count" => $this->itemCount,
+			"count" => $this->count,
 			"blockRuntimeId" => $this->blockRuntimeId,
 			"rawExtraData" => base64_encode($this->rawExtraData),
 		];

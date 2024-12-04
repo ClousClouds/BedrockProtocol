@@ -19,7 +19,7 @@ use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 class ResourcePackStackEntry{
 	public function __construct(
 		private string $packId,
-		private string $packVersion,
+		private string $version,
 		private string $subPackName
 	){}
 
@@ -27,8 +27,8 @@ class ResourcePackStackEntry{
 		return $this->packId;
 	}
 
-	public function getPackVersion() : string{
-		return $this->packVersion;
+	public function getVersion() : string{
+		return $this->version;
 	}
 
 	public function getSubPackName() : string{
@@ -37,14 +37,14 @@ class ResourcePackStackEntry{
 
 	public function write(PacketSerializer $out) : void{
 		$out->putString($this->packId);
-		$out->putString($this->packVersion);
+		$out->putString($this->version);
 		$out->putString($this->subPackName);
 	}
 
 	public static function read(PacketSerializer $in) : self{
 		$packId = $in->getString();
-		$packVersion = $in->getString();
+		$version = $in->getString();
 		$subPackName = $in->getString();
-		return new self($packId, $packVersion, $subPackName);
+		return new self($packId, $version, $subPackName);
 	}
 }
