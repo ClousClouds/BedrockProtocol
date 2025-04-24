@@ -39,6 +39,7 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 	 */
 	public static function create(array $biomeData, BiomeStringList $stringList) : self{
 		$result = new self;
+		$result->definitions = $definitions;
 		$result->biomeData = $biomeData;
 		$result->stringList = $stringList;
 		return $result;
