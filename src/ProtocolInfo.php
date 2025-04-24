@@ -57,7 +57,7 @@ final class ProtocolInfo{
 	public const TAKE_ITEM_ACTOR_PACKET = 0x11;
 	public const MOVE_ACTOR_ABSOLUTE_PACKET = 0x12;
 	public const MOVE_PLAYER_PACKET = 0x13;
-	public const PASSENGER_JUMP_PACKET = 0x14;
+
 	public const UPDATE_BLOCK_PACKET = 0x15;
 	public const ADD_PAINTING_PACKET = 0x16;
 
@@ -93,7 +93,7 @@ final class ProtocolInfo{
 	public const GUI_DATA_PICK_ITEM_PACKET = 0x36;
 
 	public const BLOCK_ACTOR_DATA_PACKET = 0x38;
-	public const PLAYER_INPUT_PACKET = 0x39;
+
 	public const LEVEL_CHUNK_PACKET = 0x3a;
 	public const SET_COMMANDS_ENABLED_PACKET = 0x3b;
 	public const SET_DIFFICULTY_PACKET = 0x3c;
@@ -235,7 +235,7 @@ final class ProtocolInfo{
 	public const UNLOCKED_RECIPES_PACKET = 0xc7;
 
 	public const CAMERA_INSTRUCTION_PACKET = 0x12c;
-	public const COMPRESSED_BIOME_DEFINITION_LIST_PACKET = 0x12d;
+
 	public const TRIM_DATA_PACKET = 0x12e;
 	public const OPEN_SIGN_PACKET = 0x12f;
 	public const AGENT_ANIMATION_PACKET = 0x130;
@@ -260,4 +260,6 @@ final class ProtocolInfo{
 	public const UPDATE_CLIENT_OPTIONS_PACKET = 0x143;
 	public const PLAYER_VIDEO_CAPTURE_PACKET = 0x144;
 	public const PLAYER_UPDATE_ENTITY_OVERRIDES_PACKET = 0x145;
+	public const CLIENTBOUND_CONTROL_SCHEME_SET_PACKET = 0x146;
+	public const PLAYER_LOCATION_PACKET = 0x147;
 }
