@@ -29,7 +29,7 @@ class OpenSignPacket extends DataPacket implements ClientboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(\pocketmine\network\mcpe\protocol\types\BlockPosition $blockPosition, bool $front) : self{
+	public static function create(BlockPosition $blockPosition, bool $front) : self{
 		$result = new self;
 		$result->blockPosition = $blockPosition;
 		$result->front = $front;

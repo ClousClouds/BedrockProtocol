@@ -32,7 +32,7 @@ class MobArmorEquipmentPacket extends DataPacket implements ClientboundPacket, S
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $actorRuntimeId, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $head, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $chest, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $legs, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $feet, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $body) : self{
+	public static function create(int $actorRuntimeId, ItemStackWrapper $head, ItemStackWrapper $chest, ItemStackWrapper $legs, ItemStackWrapper $feet, ItemStackWrapper $body) : self{
 		$result = new self;
 		$result->actorRuntimeId = $actorRuntimeId;
 		$result->head = $head;

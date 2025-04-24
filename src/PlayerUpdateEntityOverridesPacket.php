@@ -29,7 +29,7 @@ class PlayerUpdateEntityOverridesPacket extends DataPacket implements Clientboun
 	/**
 	 * @generate-create-func
 	 */
-	private static function create(int $actorRuntimeId, int $propertyIndex, \pocketmine\network\mcpe\protocol\types\OverrideUpdateType $updateType, ?int $intOverrideValue, ?float $floatOverrideValue) : self{
+	private static function create(int $actorRuntimeId, int $propertyIndex, OverrideUpdateType $updateType, ?int $intOverrideValue, ?float $floatOverrideValue) : self{
 		$result = new self;
 		$result->actorRuntimeId = $actorRuntimeId;
 		$result->propertyIndex = $propertyIndex;

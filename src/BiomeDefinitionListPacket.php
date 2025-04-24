@@ -34,10 +34,9 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 
 	/**
 	 * @generate-create-func
-	 * @param array $biomeData
 	 * @phpstan-param CacheableNbt<CompoundTag> $definitions
 	 */
-	public static function create(\pocketmine\network\mcpe\protocol\types\CacheableNbt $definitions, array $biomeData, \pocketmine\network\mcpe\protocol\types\BiomeStringList $stringList) : self{
+	public static function create(CacheableNbt $definitions, array $biomeData, BiomeStringList $stringList) : self{
 		$result = new self;
 		$result->definitions = $definitions;
 		$result->biomeData = $biomeData;

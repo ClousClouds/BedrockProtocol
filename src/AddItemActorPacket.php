@@ -42,9 +42,9 @@ class AddItemActorPacket extends DataPacket implements ClientboundPacket{
 	public static function create(
 		int $actorUniqueId,
 		int $actorRuntimeId,
-		\pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $item,
-		\pocketmine\math\Vector3 $position,
-		?\pocketmine\math\Vector3 $motion,
+		ItemStackWrapper $item,
+		Vector3 $position,
+		?Vector3 $motion,
 		array $metadata,
 		bool $isFromFishing,
 	) : self{

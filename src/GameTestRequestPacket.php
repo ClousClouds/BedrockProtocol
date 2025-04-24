@@ -41,7 +41,7 @@ class GameTestRequestPacket extends DataPacket implements ServerboundPacket{
 		int $repeatCount,
 		int $rotation,
 		bool $stopOnFailure,
-		\pocketmine\network\mcpe\protocol\types\BlockPosition $testPosition,
+		BlockPosition $testPosition,
 		int $testsPerRow,
 		string $testName,
 	) : self{

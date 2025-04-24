@@ -34,7 +34,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 	 * @generate-create-func
 	 * @param ResourcePackInfoEntry[] $resourcePackEntries
 	 */
-	public static function create(array $resourcePackEntries, bool $mustAccept, bool $hasAddons, bool $hasScripts, \Ramsey\Uuid\UuidInterface $worldTemplateId, string $worldTemplateVersion) : self{
+	public static function create(array $resourcePackEntries, bool $mustAccept, bool $hasAddons, bool $hasScripts, UuidInterface $worldTemplateId, string $worldTemplateVersion) : self{
 		$result = new self;
 		$result->resourcePackEntries = $resourcePackEntries;
 		$result->mustAccept = $mustAccept;

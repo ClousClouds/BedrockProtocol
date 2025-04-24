@@ -30,7 +30,7 @@ class SetHudPacket extends DataPacket implements ClientboundPacket{
 	 * @generate-create-func
 	 * @param HudElement[] $hudElements
 	 */
-	public static function create(array $hudElements, \pocketmine\network\mcpe\protocol\types\hud\HudVisibility $visibility) : self{
+	public static function create(array $hudElements, HudVisibility $visibility) : self{
 		$result = new self;
 		$result->hudElements = $hudElements;
 		$result->visibility = $visibility;

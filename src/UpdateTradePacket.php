@@ -47,7 +47,7 @@ class UpdateTradePacket extends DataPacket implements ClientboundPacket{
 		string $displayName,
 		bool $isV2Trading,
 		bool $isEconomyTrading,
-		\pocketmine\network\mcpe\protocol\types\CacheableNbt $offers,
+		CacheableNbt $offers,
 	) : self{
 		$result = new self;
 		$result->windowId = $windowId;

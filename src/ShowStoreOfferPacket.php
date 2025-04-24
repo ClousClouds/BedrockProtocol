@@ -26,7 +26,7 @@ class ShowStoreOfferPacket extends DataPacket implements ClientboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(string $offerId, \pocketmine\network\mcpe\protocol\types\ShowStoreOfferRedirectType $redirectType) : self{
+	public static function create(string $offerId, ShowStoreOfferRedirectType $redirectType) : self{
 		$result = new self;
 		$result->offerId = $offerId;
 		$result->redirectType = $redirectType;
