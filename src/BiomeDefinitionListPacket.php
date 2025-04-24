@@ -37,7 +37,7 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 	 * @phpstan-param CacheableNbt<CompoundTag> $definitions
 	 * @phpstan-param array<int, BiomeDefinitionData> $biomeData
 	 */
-	public static function create(array $biomeData, BiomeStringList $stringList) : self{
+	public static function create(CacheableNbt $definitions, array $biomeData, BiomeStringList $stringList) : self{
 		$result = new self;
 		$result->definitions = $definitions;
 		$result->biomeData = $biomeData;
