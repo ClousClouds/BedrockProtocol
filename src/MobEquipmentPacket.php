@@ -29,7 +29,7 @@ class MobEquipmentPacket extends DataPacket implements ClientboundPacket, Server
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $actorRuntimeId, ItemStackWrapper $item, int $inventorySlot, int $hotbarSlot, int $windowId) : self{
+	public static function create(int $actorRuntimeId, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $item, int $inventorySlot, int $hotbarSlot, int $windowId) : self{
 		$result = new self;
 		$result->actorRuntimeId = $actorRuntimeId;
 		$result->item = $item;

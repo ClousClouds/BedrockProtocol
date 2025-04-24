@@ -27,7 +27,7 @@ class LecternUpdatePacket extends DataPacket implements ServerboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $page, int $totalPages, BlockPosition $blockPosition) : self{
+	public static function create(int $page, int $totalPages, \pocketmine\network\mcpe\protocol\types\BlockPosition $blockPosition) : self{
 		$result = new self;
 		$result->page = $page;
 		$result->totalPages = $totalPages;

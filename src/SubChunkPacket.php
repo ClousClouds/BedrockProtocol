@@ -32,7 +32,7 @@ class SubChunkPacket extends DataPacket implements ClientboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $dimension, SubChunkPosition $baseSubChunkPosition, ListWithBlobHashes|ListWithoutBlobHashes $entries) : self{
+	public static function create(int $dimension, \pocketmine\network\mcpe\protocol\types\SubChunkPosition $baseSubChunkPosition, \pocketmine\network\mcpe\protocol\types\SubChunkPacketEntryWithCacheList|\pocketmine\network\mcpe\protocol\types\SubChunkPacketEntryWithoutCacheList $entries) : self{
 		$result = new self;
 		$result->dimension = $dimension;
 		$result->baseSubChunkPosition = $baseSubChunkPosition;

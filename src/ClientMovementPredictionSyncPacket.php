@@ -42,7 +42,7 @@ class ClientMovementPredictionSyncPacket extends DataPacket implements Serverbou
 	 * @generate-create-func
 	 */
 	private static function internalCreate(
-		BitSet $flags,
+		\pocketmine\network\mcpe\protocol\serializer\BitSet $flags,
 		float $scale,
 		float $width,
 		float $height,

@@ -35,7 +35,7 @@ class LoginPacket extends DataPacket implements ServerboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $protocol, JwtChain $chainDataJwt, string $clientDataJwt) : self{
+	public static function create(int $protocol, \pocketmine\network\mcpe\protocol\types\login\JwtChain $chainDataJwt, string $clientDataJwt) : self{
 		$result = new self;
 		$result->protocol = $protocol;
 		$result->chainDataJwt = $chainDataJwt;

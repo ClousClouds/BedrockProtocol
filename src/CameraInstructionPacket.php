@@ -31,7 +31,7 @@ class CameraInstructionPacket extends DataPacket implements ClientboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(?CameraSetInstruction $set, ?bool $clear, ?CameraFadeInstruction $fade, ?CameraTargetInstruction $target, ?bool $removeTarget) : self{
+	public static function create(?\pocketmine\network\mcpe\protocol\types\camera\CameraSetInstruction $set, ?bool $clear, ?\pocketmine\network\mcpe\protocol\types\camera\CameraFadeInstruction $fade, ?\pocketmine\network\mcpe\protocol\types\camera\CameraTargetInstruction $target, ?bool $removeTarget) : self{
 		$result = new self;
 		$result->set = $set;
 		$result->clear = $clear;

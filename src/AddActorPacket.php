@@ -57,15 +57,15 @@ class AddActorPacket extends DataPacket implements ClientboundPacket{
 		int $actorUniqueId,
 		int $actorRuntimeId,
 		string $type,
-		Vector3 $position,
-		?Vector3 $motion,
+		\pocketmine\math\Vector3 $position,
+		?\pocketmine\math\Vector3 $motion,
 		float $pitch,
 		float $yaw,
 		float $headYaw,
 		float $bodyYaw,
 		array $attributes,
 		array $metadata,
-		PropertySyncData $syncedProperties,
+		\pocketmine\network\mcpe\protocol\types\entity\PropertySyncData $syncedProperties,
 		array $links,
 	) : self{
 		$result = new self;

@@ -30,7 +30,7 @@ class InventorySlotPacket extends DataPacket implements ClientboundPacket{
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $windowId, int $inventorySlot, FullContainerName $containerName, ItemStackWrapper $storage, ItemStackWrapper $item) : self{
+	public static function create(int $windowId, int $inventorySlot, \pocketmine\network\mcpe\protocol\types\inventory\FullContainerName $containerName, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $storage, \pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper $item) : self{
 		$result = new self;
 		$result->windowId = $windowId;
 		$result->inventorySlot = $inventorySlot;

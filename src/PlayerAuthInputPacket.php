@@ -61,27 +61,27 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 	 * @param PlayerBlockAction[] $blockActions
 	 */
 	private static function internalCreate(
-		Vector3 $position,
+		\pocketmine\math\Vector3 $position,
 		float $pitch,
 		float $yaw,
 		float $headYaw,
 		float $moveVecX,
 		float $moveVecZ,
-		BitSet $inputFlags,
+		\pocketmine\network\mcpe\protocol\serializer\BitSet $inputFlags,
 		int $inputMode,
 		int $playMode,
 		int $interactionMode,
-		Vector2 $interactRotation,
+		\pocketmine\math\Vector2 $interactRotation,
 		int $tick,
-		Vector3 $delta,
-		?ItemInteractionData $itemInteractionData,
-		?ItemStackRequest $itemStackRequest,
+		\pocketmine\math\Vector3 $delta,
+		?\pocketmine\network\mcpe\protocol\types\ItemInteractionData $itemInteractionData,
+		?\pocketmine\network\mcpe\protocol\types\inventory\stackrequest\ItemStackRequest $itemStackRequest,
 		?array $blockActions,
-		?PlayerAuthInputVehicleInfo $vehicleInfo,
+		?\pocketmine\network\mcpe\protocol\PlayerAuthInputVehicleInfo $vehicleInfo,
 		float $analogMoveVecX,
 		float $analogMoveVecZ,
-		Vector3 $cameraOrientation,
-		Vector2 $rawMove,
+		\pocketmine\math\Vector3 $cameraOrientation,
+		\pocketmine\math\Vector2 $rawMove,
 	) : self{
 		$result = new self;
 		$result->position = $position;

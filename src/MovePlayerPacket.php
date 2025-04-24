@@ -42,7 +42,7 @@ class MovePlayerPacket extends DataPacket implements ClientboundPacket, Serverbo
 	 */
 	public static function create(
 		int $actorRuntimeId,
-		Vector3 $position,
+		\pocketmine\math\Vector3 $position,
 		float $pitch,
 		float $yaw,
 		float $headYaw,
