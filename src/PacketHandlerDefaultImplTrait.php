@@ -843,10 +843,10 @@ trait PacketHandlerDefaultImplTrait{
 	}
 
 	public function handleClientboundControlSchemeSet(ClientboundControlSchemeSetPacket $packet) : bool{
-	    return false;
+		return false;
 	}
 
 	public function handlePlayerLocation(PlayerLocationPacket $packet) : bool{
-	    return false;
+		return false;
 	}
 }

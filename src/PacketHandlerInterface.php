@@ -430,5 +430,5 @@ interface PacketHandlerInterface{
 
 	public function handleClientboundControlSchemeSet(ClientboundControlSchemeSetPacket $packet) : bool;
 
-    public function handlePlayerLocation(PlayerLocationPacket $packet) : bool;
+	public function handlePlayerLocation(PlayerLocationPacket $packet) : bool;
 }
