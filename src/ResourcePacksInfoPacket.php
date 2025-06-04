@@ -38,7 +38,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 	public static function create(
 		array $resourcePackEntries,
 		bool $mustAccept,
-		bool $hasAddons, 
+		bool $hasAddons,
 		bool $hasScripts,
 		bool $forceDisableVibrantVisuals,
 		UuidInterface $worldTemplateId,
