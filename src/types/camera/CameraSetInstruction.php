@@ -28,7 +28,8 @@ final class CameraSetInstruction{
 		private ?Vector3 $facingPosition,
 		private ?Vector2 $viewOffset,
 		private ?Vector3 $entityOffset,
-		private ?bool $default
+		private ?bool $default,
+		private bool $removeIgnoreStartingValuesComponent;
 	){}
 
 	public function getPreset() : int{ return $this->preset; }
@@ -47,6 +48,8 @@ final class CameraSetInstruction{
 
 	public function getDefault() : ?bool{ return $this->default; }
 
+	public function getRemoveIgnoreStartingValuesComponent() : bool{ return $this->removeIgnoreStartingValuesComponent; }
+
 	public static function read(PacketSerializer $in) : self{
 		$preset = $in->getLInt();
 		$ease = $in->readOptional(fn() => CameraSetInstructionEase::read($in));
@@ -56,6 +59,7 @@ final class CameraSetInstruction{
 		$viewOffset = $in->readOptional($in->getVector2(...));
 		$entityOffset = $in->readOptional($in->getVector3(...));
 		$default = $in->readOptional($in->getBool(...));
+		$removeIgnoreStartingValuesComponent = $in->getBool();
 
 		return new self(
 			$preset,
@@ -65,7 +69,8 @@ final class CameraSetInstruction{
 			$facingPosition,
 			$viewOffset,
 			$entityOffset,
-			$default
+			$default,
+			$removeIgnoreStartingValuesComponent
 		);
 	}
 
@@ -78,5 +83,6 @@ final class CameraSetInstruction{
 		$out->writeOptional($this->viewOffset, $out->putVector2(...));
 		$out->writeOptional($this->entityOffset, $out->putVector3(...));
 		$out->writeOptional($this->default, $out->putBool(...));
+		$out->putBool($this->removeIgnoreStartingValuesComponent);
 	}
 }
