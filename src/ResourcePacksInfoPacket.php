@@ -42,7 +42,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 		bool $hasScripts,
 		bool $forceDisableVibrantVisuals,
 		UuidInterface $worldTemplateId,
-		string $worldTemplateVersion
+		string $worldTemplateVersion,
 	) : self{
 		$result = new self;
 		$result->resourcePackEntries = $resourcePackEntries;
