@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types;
 
-class ScriptModuleDebugUtilities{
+final class ScriptModuleDebugUtilities{
 	const ScriptDebugShapeType = [
 		'Line' => 0,
 		'Box' => 1,
