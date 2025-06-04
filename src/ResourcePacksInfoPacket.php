@@ -27,6 +27,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 	public bool $mustAccept = false; //if true, forces client to choose between accepting packs or being disconnected
 	public bool $hasAddons = false;
 	public bool $hasScripts = false; //if true, causes disconnect for any platform that doesn't support scripts yet
+	public bool $forceDisableVibrantVisuals = false;
 	private UuidInterface $worldTemplateId;
 	private string $worldTemplateVersion;
 
@@ -40,6 +41,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 		$result->mustAccept = $mustAccept;
 		$result->hasAddons = $hasAddons;
 		$result->hasScripts = $hasScripts;
+		$result->forceDisableVibrantVisuals = $forceDisableVibrantVisuals;
 		$result->worldTemplateId = $worldTemplateId;
 		$result->worldTemplateVersion = $worldTemplateVersion;
 		return $result;
@@ -53,6 +55,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 		$this->mustAccept = $in->getBool();
 		$this->hasAddons = $in->getBool();
 		$this->hasScripts = $in->getBool();
+		$this->forceDisableVibrantVisuals = $in->getBool();
 		$this->worldTemplateId = $in->getUUID();
 		$this->worldTemplateVersion = $in->getString();
 
@@ -66,6 +69,7 @@ class ResourcePacksInfoPacket extends DataPacket implements ClientboundPacket{
 		$out->putBool($this->mustAccept);
 		$out->putBool($this->hasAddons);
 		$out->putBool($this->hasScripts);
+		$out->putBool($this->forceDisableVibrantVisuals);
 		$out->putUUID($this->worldTemplateId);
 		$out->putString($this->worldTemplateVersion);
 		$out->putLShort(count($this->resourcePackEntries));
