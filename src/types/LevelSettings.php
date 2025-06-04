@@ -79,6 +79,7 @@ final class LevelSettings{
 	public string $serverIdentifier = "";
 	public string $worldIdentifier = "";
 	public string $scenarioIdentifier = "";
+	public string $ownerIdentifier = "";
 
 	/**
 	 * @throws BinaryDataException
