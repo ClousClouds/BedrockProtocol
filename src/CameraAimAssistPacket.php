@@ -27,6 +27,7 @@ class CameraAimAssistPacket extends DataPacket implements ClientboundPacket{
 	private float $distance;
 	private CameraAimAssistTargetMode $targetMode;
 	private CameraAimAssistActionType $actionType;
+	private bool $showDebugRender;
 
 	/**
 	 * @generate-create-func
