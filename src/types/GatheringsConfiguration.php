@@ -23,13 +23,13 @@ final class GatheringsConfiguration{
 
 	public function __construct(
 		public UuidInterface $experienceId,
-    public string $experienceName,
-    public UuidInterface $worldId,
-    public string $worldName,
-    public string $creatorId,
-    public UuidInterface $targetId,
-    public string $scenarioId,
-    public string $serverId,
+	public string $experienceName,
+	public UuidInterface $worldId,
+	public string $worldName,
+	public string $creatorId,
+	public UuidInterface $targetId,
+	public string $scenarioId,
+	public string $serverId,
 	){}
 
   public function getExperienceId() : UuidInterface { return $this->experienceId; }
@@ -50,34 +50,34 @@ final class GatheringsConfiguration{
 
 	public static function read(ByteBufferReader $in) : self{
 		$experienceId = CommonTypes::getUUID($in);
-    $experienceName = CommonTypes::getString($in);
-    $worldId = CommonTypes::getUUID($in);
-    $worldName = CommonTypes::getString($in);
-    $creatorId = CommonTypes::getString($in);
-    $targetId = CommonTypes::getUUID($in);
-    $scenarioId = CommonTypes::getString($in);
-    $serverId = CommonTypes::getString($in);
+	$experienceName = CommonTypes::getString($in);
+	$worldId = CommonTypes::getUUID($in);
+	$worldName = CommonTypes::getString($in);
+	$creatorId = CommonTypes::getString($in);
+	$targetId = CommonTypes::getUUID($in);
+	$scenarioId = CommonTypes::getString($in);
+	$serverId = CommonTypes::getString($in);
 
 		return new self(
 			$experienceId,
-      $experienceName,
-      $worldId,
-      $worldName,
-      $creatorId,
-      $targetId,
-      $scenarioId,
-      $serverId,
+	  $experienceName,
+	  $worldId,
+	  $worldName,
+	  $creatorId,
+	  $targetId,
+	  $scenarioId,
+	  $serverId,
 		);
 	}
 
 	public function write(ByteBufferWriter $out) : void{
 		CommonTypes::putUUID($out, $this->experienceId);
-    CommonTypes::putString($out, $this->experienceName);
+	CommonTypes::putString($out, $this->experienceName);
 		CommonTypes::putUUID($out, $this->worldId);
-    CommonTypes::putString($out, $this->worldName);
-    CommonTypes::putString($out, $this->creatorId);
+	CommonTypes::putString($out, $this->worldName);
+	CommonTypes::putString($out, $this->creatorId);
 		CommonTypes::putUUID($out, $this->targetId);
-    CommonTypes::putString($out, $this->scenarioId);
-    CommonTypes::putString($out, $this->serverId);
+	CommonTypes::putString($out, $this->scenarioId);
+	CommonTypes::putString($out, $this->serverId);
 	}
 }

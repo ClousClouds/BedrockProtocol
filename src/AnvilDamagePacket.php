@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol;
 
-use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
@@ -30,7 +29,6 @@ class AnvilDamagePacket extends DataPacket implements ServerboundPacket{
 	 */
 	public static function create(BlockPosition $blockPosition) : self{
 		$result = new self;
-		$result->damageAmount = $damageAmount;
 		return $result;
 	}
 
