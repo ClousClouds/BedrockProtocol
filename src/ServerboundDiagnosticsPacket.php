@@ -54,7 +54,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	private array $systemDiagnostics = [];
   /**
    * @var SystemCategory[]
-   * @phpstan-var list<systemDiagnostics>
+   * @phpstan-var list<SystemCategory>
    */
   private array $systemCategory = [];
 	/**
@@ -73,7 +73,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @phpstan-param list<MemoryCategoryCounter>      $memoryCategoryValues
 	 * @phpstan-param list<EntityDiagnosticTimingInfo> $entityDiagnostics
 	 * @phpstan-param list<SystemDiagnosticTimingInfo> $systemDiagnostics
-	 * @phpstan-param list<systemDiagnostics>          $systemCategory
+	 * @phpstan-param list<SystemCategory>          $systemCategory
 	 * @phpstan-param list<WhiskerScopeDataSummary>    $whiskerScopes
 	 */
 	public static function create(
