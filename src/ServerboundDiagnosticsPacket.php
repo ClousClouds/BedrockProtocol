@@ -73,7 +73,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @phpstan-param list<MemoryCategoryCounter>      $memoryCategoryValues
 	 * @phpstan-param list<EntityDiagnosticTimingInfo> $entityDiagnostics
 	 * @phpstan-param list<SystemDiagnosticTimingInfo> $systemDiagnostics
-	 * @phpstan-param list<SystemCategory>          $systemCategory
+	 * @phpstan-param list<SystemCategory>             $systemCategory
 	 * @phpstan-param list<WhiskerScopeDataSummary>    $whiskerScopes
 	 */
 	public static function create(
