@@ -443,13 +443,13 @@ final class CommonTypes{
 		VarInt::writeUnsignedInt($out, count($metadata));
 		foreach($metadata as $key => $property){
 			VarInt::writeUnsignedInt($out, $key);
-	  	self::writeMetadataProperty($out, $property);
+			self::writeMetadataProperty($out, $property);
 		}
 	}
 
   private static function writeMetadataProperty(ByteBufferWriter $out, MetadataProperty $property) : void{
-  	VarInt::writeUnsignedInt($out, $property->getTypeId());
-  	$property->write($out);
+	VarInt::writeUnsignedInt($out, $property->getTypeId());
+	$property->write($out);
   }
 
 	/** @throws DataDecodeException */
