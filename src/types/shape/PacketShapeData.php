@@ -125,7 +125,6 @@ final class PacketShapeData{
 			color: $color,
 			dimensionId: $dimensionId,
 			attachedToEntityId: $attachedToEntityId,
-	    lineGapHeight: $lineGapHeight,
 			payload: new PrimitiveShapeTextPayload($text, $useRotation, $backgroundColor, $lineGapHeight, $depthTest, $showBackface, $showTextBackface)
 		);
 	}
