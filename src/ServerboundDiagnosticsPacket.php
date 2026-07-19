@@ -184,10 +184,10 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 			$this->systemDiagnostics[] = SystemDiagnosticTimingInfo::read($in);
 		}
 
-	$this->systemCategory = [];
-	for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; $i++){
-	  $this->systemCategory[] = SystemCategory::read($in);
-	}
+		$this->systemCategory = [];
+		for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; $i++){
+			$this->systemCategory[] = SystemCategory::read($in);
+		}
 
 		$this->whiskerScopes = [];
 		for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; $i++){

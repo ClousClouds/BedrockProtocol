@@ -407,16 +407,17 @@ final class CommonTypes{
 		$data = [];
 		for($i = 0; $i < $count; ++$i){
 			$key = VarInt::readUnsignedInt($in);
-			$type = VarInt::readUnsignedInt($in);
 
-			$data[$key] = self::readMetadataProperty($in, $type);
+			$data[$key] = self::readMetadataProperty($in);
 		}
 
 		return $data;
 	}
 
 	/** @throws DataDecodeException */
-	private static function readMetadataProperty(ByteBufferReader $in, int $type) : MetadataProperty{
+	private static function readMetadataProperty(ByteBufferReader $in) : MetadataProperty{
+	$type = VarInt::readUnsignedInt($int);
+
 		return match($type){
 			ByteMetadataProperty::ID => ByteMetadataProperty::read($in),
 			ShortMetadataProperty::ID => ShortMetadataProperty::read($in),
@@ -440,12 +441,16 @@ final class CommonTypes{
 	 */
 	public static function putEntityMetadata(ByteBufferWriter $out, array $metadata) : void{
 		VarInt::writeUnsignedInt($out, count($metadata));
-		foreach($metadata as $key => $d){
+		foreach($metadata as $key => $property){
 			VarInt::writeUnsignedInt($out, $key);
-			VarInt::writeUnsignedInt($out, $d->getTypeId());
-			$d->write($out);
+	  self::writeMetadataProperty($out, $property);
 		}
 	}
+
+  private static function writeMetadataProperty(ByteBufferWriter $out, MetadataProperty $property){
+	VarInt::writeUnsignedInt($out, $property->getTypeId());
+	$property->write($out);
+  }
 
 	/** @throws DataDecodeException */
 	public static function getActorUniqueId(ByteBufferReader $in) : int{

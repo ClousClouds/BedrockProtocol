@@ -32,7 +32,7 @@ final class ProtocolInfo{
 	 */
 
 	/** Actual Minecraft: PE protocol version */
-	public const CURRENT_PROTOCOL = 2169;
+	public const CURRENT_PROTOCOL = 2168;
 	/** Display version shown in the server logs. This should match the version on the game's home screen. */
 	public const MINECRAFT_VERSION = 'v26.40';
 	/** Version sent on the network for client side compatibility checks. This may differ from the display version. */
