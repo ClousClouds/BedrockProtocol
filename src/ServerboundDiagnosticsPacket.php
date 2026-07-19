@@ -68,10 +68,12 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @param MemoryCategoryCounter[]      $memoryCategoryValues
 	 * @param EntityDiagnosticTimingInfo[] $entityDiagnostics
 	 * @param SystemDiagnosticTimingInfo[] $systemDiagnostics
+	 * @param SystemCategory[]             $systemCategory
 	 * @param WhiskerScopeDataSummary[]    $whiskerScopes
 	 * @phpstan-param list<MemoryCategoryCounter>      $memoryCategoryValues
 	 * @phpstan-param list<EntityDiagnosticTimingInfo> $entityDiagnostics
 	 * @phpstan-param list<SystemDiagnosticTimingInfo> $systemDiagnostics
+	 * @phpstan-param list<systemDiagnostics>          $systemCategory
 	 * @phpstan-param list<WhiskerScopeDataSummary>    $whiskerScopes
 	 */
 	public static function create(
@@ -87,6 +89,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 		array $memoryCategoryValues,
 		array $entityDiagnostics,
 		array $systemDiagnostics,
+		array $systemCategory,
 		array $whiskerScopes,
 	) : self{
 		$result = new self;
@@ -102,6 +105,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 		$result->memoryCategoryValues = $memoryCategoryValues;
 		$result->entityDiagnostics = $entityDiagnostics;
 		$result->systemDiagnostics = $systemDiagnostics;
+		$result->systemCategory = $systemCategory;
 		$result->whiskerScopes = $whiskerScopes;
 		return $result;
 	}

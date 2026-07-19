@@ -36,7 +36,7 @@ class TransferPacket extends DataPacket implements ClientboundPacket{
 		$result->address = $address;
 		$result->port = $port;
 		$result->reloadWorld = $reloadWorld;
-	$result->gatheringsConfig = $gatheringsConfig;
+		$result->gatheringsConfig = $gatheringsConfig;
 		return $result;
 	}
 

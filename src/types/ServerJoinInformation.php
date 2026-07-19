@@ -21,7 +21,7 @@ use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 final class ServerJoinInformation{
 
 	public function __construct(
-		private ?GatheringJoinInfo $gatheringJoinInfo,
+		private ?GatheringsConfiguration $gatheringJoinInfo,
 		private ?StoreEntryPointInfo $storeEntryPointInfo,
 		private ?PresenceInfo $presenceInfo,
 	){}

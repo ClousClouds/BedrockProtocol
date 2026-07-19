@@ -22,62 +22,62 @@ use Ramsey\Uuid\UuidInterface;
 final class GatheringsConfiguration{
 
 	public function __construct(
-		public UuidInterface $experienceId,
-	public string $experienceName,
-	public UuidInterface $worldId,
-	public string $worldName,
-	public string $creatorId,
-	public UuidInterface $targetId,
-	public string $scenarioId,
-	public string $serverId,
+		private UuidInterface $experienceId,
+		private string $experienceName,
+		private UuidInterface $experienceWorldId,
+		private string $experienceWorldName,
+		private string $creatorId,
+		private UuidInterface $targetId,
+		private string $scenarioId,
+		private string $serverId,
 	){}
 
-  public function getExperienceId() : UuidInterface { return $this->experienceId; }
+	public function getExperienceId() : UuidInterface{ return $this->experienceId; }
 
-  public function getExperienceName() : string { return $this->experienceName; }
+	public function getExperienceName() : string{ return $this->experienceName; }
 
-  public function getWorldId() : UuidInterface { return $this->worldId; }
+	public function getExperienceWorldId() : UuidInterface{ return $this->experienceWorldId; }
 
-  public function getWorldName() : string { return $this->worldName; }
+	public function getExperienceWorldName() : string{ return $this->experienceWorldName; }
 
-  public function getCreatorId() : string { return $this->creatorId; }
+	public function getCreatorId() : string{ return $this->creatorId; }
 
-  public function getTargetId() : UuidInterface { return $this->targetId; }
+	public function getTargetId() : UuidInterface{ return $this->targetId; }
 
-  public function getScenarioId() : string { return $this->scenarioId; }
+	public function getScenarioId() : string{ return $this->scenarioId; }
 
-  public function getServerId() : string { return $this->serverId; }
+	public function getServerId() : string{ return $this->serverId; }
 
 	public static function read(ByteBufferReader $in) : self{
 		$experienceId = CommonTypes::getUUID($in);
-	$experienceName = CommonTypes::getString($in);
-	$worldId = CommonTypes::getUUID($in);
-	$worldName = CommonTypes::getString($in);
-	$creatorId = CommonTypes::getString($in);
-	$targetId = CommonTypes::getUUID($in);
-	$scenarioId = CommonTypes::getString($in);
-	$serverId = CommonTypes::getString($in);
+		$experienceName = CommonTypes::getString($in);
+		$experienceWorldId = CommonTypes::getUUID($in);
+		$experienceWorldName = CommonTypes::getString($in);
+		$creatorId = CommonTypes::getString($in);
+		$targetId = CommonTypes::getUUID($in);
+		$scenarioId = CommonTypes::getString($in);
+		$serverId = CommonTypes::getString($in);
 
 		return new self(
 			$experienceId,
-	  $experienceName,
-	  $worldId,
-	  $worldName,
-	  $creatorId,
-	  $targetId,
-	  $scenarioId,
-	  $serverId,
+			$experienceName,
+			$experienceWorldId,
+			$experienceWorldName,
+			$creatorId,
+			$targetId,
+			$scenarioId,
+			$serverId,
 		);
 	}
 
 	public function write(ByteBufferWriter $out) : void{
 		CommonTypes::putUUID($out, $this->experienceId);
-	CommonTypes::putString($out, $this->experienceName);
-		CommonTypes::putUUID($out, $this->worldId);
-	CommonTypes::putString($out, $this->worldName);
-	CommonTypes::putString($out, $this->creatorId);
+		CommonTypes::putString($out, $this->experienceName);
+		CommonTypes::putUUID($out, $this->experienceWorldId);
+		CommonTypes::putString($out, $this->experienceWorldName);
+		CommonTypes::putString($out, $this->creatorId);
 		CommonTypes::putUUID($out, $this->targetId);
-	CommonTypes::putString($out, $this->scenarioId);
-	CommonTypes::putString($out, $this->serverId);
+		CommonTypes::putString($out, $this->scenarioId);
+		CommonTypes::putString($out, $this->serverId);
 	}
 }
