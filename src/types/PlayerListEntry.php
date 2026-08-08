@@ -36,7 +36,7 @@ class PlayerListEntry{
 
 	public static function createRemovalEntry(UuidInterface $uuid) : PlayerListEntry{
 		$entry = new PlayerListEntry();
-	$entry->type = PlayerListPacket::TYPE_REMOVE;
+		$entry->type = PlayerListPacket::TYPE_REMOVE;
 		$entry->uuid = $uuid;
 
 		return $entry;
@@ -56,7 +56,7 @@ class PlayerListEntry{
 		?Color $color = null
 	) : PlayerListEntry{
 		$entry = new PlayerListEntry();
-	$entry->type = PlayerListPacket::TYPE_ADD;
+		$entry->type = PlayerListPacket::TYPE_ADD;
 		$entry->uuid = $uuid;
 		$entry->actorUniqueId = $actorUniqueId;
 		$entry->username = $username;

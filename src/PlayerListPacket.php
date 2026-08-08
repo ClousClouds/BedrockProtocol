@@ -48,9 +48,9 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	 * @param PlayerListEntry[] $entries
 	 */
 	public static function add(array $entries) : self{
-	foreach($entries as $entry){
-		$entry->type = self::TYPE_ADD;
-	}
+		foreach($entries as $entry){
+			$entry->type = self::TYPE_ADD;
+		}
 		return self::create($entries);
 	}
 
@@ -59,8 +59,8 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	 */
 	public static function remove(array $entries) : self{
 		foreach($entries as $entry){
-		$entry->type = self::TYPE_REMOVE;
-	}
+			$entry->type = self::TYPE_REMOVE;
+		}
 		return self::create($entries);
 	}
 
@@ -68,8 +68,8 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 		$count = VarInt::readUnsignedInt($in);
 		for($i = 0; $i < $count; ++$i){
 			$entry = new PlayerListEntry();
-		$entry->type = VarInt::readUnsignedInt($in);
-		Byte::readUnsigned($in); // legacyid
+			$entry->type = VarInt::readUnsignedInt($in);
+			Byte::readUnsigned($in); // legacyid
 
 			if($entry->type === self::TYPE_ADD){
 				$entry->uuid = CommonTypes::getUUID($in);
@@ -86,8 +86,8 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 			}elseif($entry->type === self::TYPE_REMOVE){
 				$entry->uuid = CommonTypes::getUUID($in);
 			}else{
-		throw new DataDecodeException("Unknown player list entry type " . $entry->type);
-		}
+				throw new DataDecodeException("Unknown player list entry type " . $entry->type);
+			}
 
 			$this->entries[$i] = $entry;
 		}
@@ -96,8 +96,8 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		VarInt::writeUnsignedInt($out, count($this->entries));
 		foreach($this->entries as $entry){
-		VarInt::writeUnsignedInt($out, $entry->type);
-		Byte::writeUnsigned($out, $entry->type === self::TYPE_ADD ? 0 : 1);
+			VarInt::writeUnsignedInt($out, $entry->type);
+			Byte::writeUnsigned($out, $entry->type === self::TYPE_ADD ? 0 : 1);
 			if($entry->type === self::TYPE_ADD){
 				CommonTypes::putUUID($out, $entry->uuid);
 				CommonTypes::putActorUniqueId($out, $entry->actorUniqueId);
@@ -113,8 +113,8 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 			}elseif($entry->type === self::TYPE_REMOVE){
 				CommonTypes::putUUID($out, $entry->uuid);
 			}else{
-		throw new \InvalidArgumentException("Unknown player list entry type " . $entry->type);
-		}
+				throw new \InvalidArgumentException("Unknown player list entry type " . $entry->type);
+			}
 		}
 	}
 

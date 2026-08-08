@@ -157,8 +157,8 @@ final class CommonTypes{
 		$capeOnClassic = self::getBool($in);
 		$isPrimaryUser = self::getBool($in);
 		$override = self::getBool($in);
-	$trustedSkinFlag = self::getString($in);
-	$profileHash = self::getString($in);
+		$trustedSkinFlag = self::getString($in);
+		$profileHash = self::getString($in);
 
 		return new SkinData(
 			$skinId,
@@ -182,8 +182,8 @@ final class CommonTypes{
 			$capeOnClassic,
 			$isPrimaryUser,
 			$override,
-		$trustedSkinFlag,
-		$profileHash,
+			$trustedSkinFlag,
+			$profileHash,
 		);
 	}
 
@@ -227,8 +227,8 @@ final class CommonTypes{
 		self::putBool($out, $skin->isPersonaCapeOnClassic());
 		self::putBool($out, $skin->isPrimaryUser());
 		self::putBool($out, $skin->isOverride());
-	self::putString($out, $skin->getTrustedSkinFlag());
-	self::putString($out, $skin->getProfileHash());
+		self::putString($out, $skin->getTrustedSkinFlag());
+		self::putString($out, $skin->getProfileHash());
 	}
 
 	/** @throws DataDecodeException */
@@ -421,7 +421,7 @@ final class CommonTypes{
 	/** @throws DataDecodeException */
 	private static function readMetadataProperty(ByteBufferReader $in) : MetadataProperty{
 		$type = VarInt::readUnsignedInt($in);
-	Byte::readUnsigned($in);
+		Byte::readUnsigned($in);
 
 		return match($type){
 			ByteMetadataProperty::ID => ByteMetadataProperty::read($in),

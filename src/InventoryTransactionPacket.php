@@ -60,12 +60,12 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->requestId = CommonTypes::readLegacyItemStackRequestId($in);
 
-		$this->requestChangedSlots = CommonTypes::readOptional($in, static function(ByteBufferReader $in) : array{
-			$result = [];
-			for($i = 0, $len = VarInt::readUnsignedInt($in); $i < $len; ++$i){
-				$result[] = InventoryTransactionChangedSlotsHack::read($in);
-			}
-			return $result;
+			$this->requestChangedSlots = CommonTypes::readOptional($in, static function(ByteBufferReader $in) : array{
+				$result = [];
+				for($i = 0, $len = VarInt::readUnsignedInt($in); $i < $len; ++$i){
+					$result[] = InventoryTransactionChangedSlotsHack::read($in);
+				}
+				return $result;
 		});
 
 		if(Byte::readUnsigned($in) !== 1){
@@ -84,29 +84,29 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 			default => throw new PacketDecodeException("Unknown transaction type $transactionType"),
 		};
 
-	$hasTrData = CommonTypes::getBool($in);
-	if(!$hasTrData){
-		$this->trData = null;
-		return;
-	}
+		$hasTrData = CommonTypes::getBool($in);
+		if(!$hasTrData){
+			$this->trData = null;
+			return;
+		}
 		$this->trData->decodeTransaction($in);
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::writeLegacyItemStackRequestId($out, $this->requestId);
 
-		CommonTypes::writeOptional($out, $this->requestChangedSlots, static function(ByteBufferWriter $out, array $value) : void{
-			VarInt::writeUnsignedInt($out, count($value));
-			foreach($value as $changedSlots){
-				$changedSlots->write($out);
-			}
+			CommonTypes::writeOptional($out, $this->requestChangedSlots, static function(ByteBufferWriter $out, array $value) : void{
+				VarInt::writeUnsignedInt($out, count($value));
+				foreach($value as $changedSlots){
+					$changedSlots->write($out);
+				}
 		});
 
 		Byte::writeUnsigned($out, $this->trData !== null ? 1 : 0);
-	if($this->trData !== null){
-		VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
-		$this->trData->encodeTransaction($out);
-	}
+		if($this->trData !== null){
+			VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
+			$this->trData->encodeTransaction($out);
+		}
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

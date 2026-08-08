@@ -104,7 +104,7 @@ class MovePlayerPacket extends DataPacket implements ClientboundPacket, Serverbo
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
-	$isTeleportMode = $this->mode === MovePlayerPacket::MODE_TELEPORT;
+		$isTeleportMode = $this->mode === MovePlayerPacket::MODE_TELEPORT;
 		CommonTypes::putActorRuntimeId($out, $this->actorRuntimeId);
 		CommonTypes::putVector3($out, $this->position);
 		LE::writeFloat($out, $this->pitch);
@@ -113,7 +113,7 @@ class MovePlayerPacket extends DataPacket implements ClientboundPacket, Serverbo
 		Byte::writeUnsigned($out, $this->mode);
 		CommonTypes::putBool($out, $this->onGround);
 		CommonTypes::putActorRuntimeId($out, $this->ridingActorRuntimeId);
-	CommonTypes::putBool($out, $isTeleportMode);
+		CommonTypes::putBool($out, $isTeleportMode);
 		if($isTeleportMode){
 			LE::writeSignedInt($out, $this->teleportCause);
 			LE::writeSignedInt($out, $this->teleportItem);

@@ -58,7 +58,7 @@ class SkinData{
 		private bool $personaCapeOnClassic = false,
 		private bool $isPrimaryUser = true,
 		private bool $override = true,
-	private string $trustedSkinFlag = self::TRUSTED_SKIN_FLAG_TRUE,
+		private string $trustedSkinFlag = self::TRUSTED_SKIN_FLAG_TRUE,
 		private string $profileHash = "",
 	){
 		$this->capeImage = $capeImage ?? new SkinImage(0, 0, "");

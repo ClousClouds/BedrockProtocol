@@ -61,6 +61,176 @@ if($target === null){
 	exit(1);
 }
 
+/**
+ * Calculates indentation for every PHP source line.
+ *
+ * {} controls normal block indentation.
+ * () controls multiline parameter/call indentation.
+ * [] controls multiline array indentation.
+ *
+ * Only indentation is changed. Source code itself is untouched.
+ */
+function getIndentationLevels(string $content) : array{
+	$tokens = token_get_all($content);
+	$levels = [];
+	$stack = [];
+	$line = 1;
+	$insideCase = false;
+
+	// Tracks whether the most recently seen keyword-like token before an
+	// upcoming '{' was `switch`, so we can tell a real switch block apart
+	// from a `match(...){...}` expression (which also legally contains a
+	// `default` token, but it is NOT a case label and must not affect
+	// indentation tracking).
+	$lastSignificantKeyword = null;
+
+	// Parallel stack to $stack: for every '{' pushed, records whether that
+	// specific block is a switch body. Only a switch body may set/consume
+	// $caseLevel / $insideCase.
+	$blockIsSwitchStack = [];
+
+	// $caseStackDepthAtEntry records count($stack) at the moment we entered
+	// the current case body (i.e. right after the case label, when no
+	// nested block has been opened yet). The "virtual" extra indent that a
+	// case body gets (+1 versus the switch body) must be added on top of
+	// however deep $stack currently is, not just maxed against a flat
+	// $caseLevel - otherwise nested blocks inside a case (if/for/etc.)
+	// collapse to the same level as their own opening line.
+	$caseStackDepthAtEntry = null;
+
+	$getLevel = static function() use (&$stack, &$caseStackDepthAtEntry, &$insideCase) : int{
+		$level = count($stack);
+
+		if($insideCase && $caseStackDepthAtEntry !== null && $level >= $caseStackDepthAtEntry){
+			$level += 1;
+		}
+
+		return $level;
+	};
+
+	foreach($tokens as $token){
+		if(is_array($token)){
+			[$id, $text, $tokenLine] = $token;
+			$line = $tokenLine;
+
+			if($id === T_WHITESPACE){
+				$line += substr_count($text, "\n");
+				continue;
+			}
+
+			if($id === T_COMMENT || $id === T_DOC_COMMENT){
+				$levels[$line] ??= $getLevel();
+				$line += substr_count($text, "\n");
+				continue;
+			}
+
+			if($id === T_SWITCH){
+				$lastSignificantKeyword = 'switch';
+				$levels[$line] ??= $getLevel();
+				continue;
+			}
+
+			if($id === T_MATCH){
+				$lastSignificantKeyword = 'match';
+				$levels[$line] ??= $getLevel();
+				continue;
+			}
+
+			if($id === T_CASE || $id === T_DEFAULT){
+				// Only treat this as a switch case label if we're currently
+				// inside a switch body (not inside a match() expression,
+				// where `default` is just an arm, not a case label).
+				$currentBlockIsSwitch = $blockIsSwitchStack !== []
+					&& end($blockIsSwitchStack) === true;
+
+				if($currentBlockIsSwitch){
+					$levels[$line] = count($stack);
+					$caseStackDepthAtEntry = count($stack);
+					$insideCase = true;
+				}else{
+					$levels[$line] ??= $getLevel();
+				}
+				continue;
+			}
+
+			if($id === T_FUNCTION || $id === T_FN || $id === T_CLASS){
+				$lastSignificantKeyword = null;
+				$levels[$line] ??= $getLevel();
+				continue;
+			}
+
+			$levels[$line] ??= $getLevel();
+			continue;
+		}
+
+		$text = $token;
+
+		if($text === "\n"){
+			++$line;
+			continue;
+		}
+
+		if($text === '{'){
+			$levels[$line] ??= $getLevel();
+			$stack[] = '{';
+			// Only the '{' that immediately follows switch(...)/match(...) at
+			// the same nesting depth is the switch/match body itself; a '{'
+			// belonging to a nested closure inside the condition would be
+			// preceded by other tokens (e.g. `function`, `fn`) that we treat
+			// as clearing the pending keyword below.
+			$blockIsSwitchStack[] = ($lastSignificantKeyword === 'switch');
+			$lastSignificantKeyword = null;
+			continue;
+		}
+
+		if($text === '(' || $text === '['){
+			$levels[$line] ??= $getLevel();
+			$stack[] = $text;
+			continue;
+		}
+
+		if($text === '}' || $text === ')' || $text === ']'){
+			if($stack !== []){
+				$opening = array_pop($stack);
+
+				if($opening === '{'){
+					$closedBlockWasSwitch = array_pop($blockIsSwitchStack) === true;
+
+					// Reset case tracking only when the BLOCK that closes is
+					// the switch body itself (not any nested block/closure),
+					// and it takes us back above the depth the switch's
+					// cases were opened at. This correctly handles the
+					// switch's own closing brace even when the last
+					// case/default has no trailing `break;` before it,
+					// without misfiring on nested blocks, or on ')'/']'
+					// closing an expression inside a case body.
+					if(
+						$closedBlockWasSwitch
+						&& $insideCase
+						&& $caseStackDepthAtEntry !== null
+						&& count($stack) < $caseStackDepthAtEntry
+					){
+						$caseStackDepthAtEntry = null;
+						$insideCase = false;
+					}
+				}
+			}
+
+			$levels[$line] = $getLevel();
+			continue;
+		}
+
+		if(trim($text) !== ''){
+			$levels[$line] ??= $getLevel();
+		}
+	}
+
+	return $levels;
+}
+
+/**
+ * Fixes only leading indentation.
+ */
 function fixIndent(string $content) : string{
 	$lineEnding = str_contains($content, "\r\n") ? "\r\n" : "\n";
 
@@ -70,22 +240,27 @@ function fixIndent(string $content) : string{
 		return $content;
 	}
 
-	foreach($lines as &$line){
-		if(preg_match('/^([ \t]+)/', $line, $match) !== 1){
+	$levels = getIndentationLevels($content);
+
+	foreach($lines as $index => &$line){
+		$lineNumber = $index + 1;
+
+		if(trim($line) === ''){
 			continue;
 		}
 
-		$leading = $match[1];
-		$columns = 0;
-		$length = strlen($leading);
-
-		for($i = 0; $i < $length; ++$i){
-			$columns += $leading[$i] === "\t" ? 4 : 1;
+		if(!isset($levels[$lineNumber])){
+			continue;
 		}
 
-		$tabs = (int) ceil($columns / 4);
+		if(preg_match('/^[ \t]*/', $line, $match) !== 1){
+			continue;
+		}
 
-		$line = str_repeat("\t", $tabs) . substr($line, $length);
+		$leadingLength = strlen($match[0]);
+
+		$line = str_repeat("\t", max(0, $levels[$lineNumber]))
+			. substr($line, $leadingLength);
 	}
 
 	unset($line);
@@ -129,12 +304,7 @@ function printDiff(string $old, string $new, string $file) : void{
 	echo YELLOW . "=== $file ===" . RESET . "\n";
 
 	foreach($output as $line){
-		if(str_starts_with($line, '---')){
-			echo CYAN . $line . RESET . "\n";
-			continue;
-		}
-
-		if(str_starts_with($line, '+++')){
+		if(str_starts_with($line, '---') || str_starts_with($line, '+++')){
 			echo CYAN . $line . RESET . "\n";
 			continue;
 		}

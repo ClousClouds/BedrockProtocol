@@ -40,20 +40,20 @@ class ResourcePackClientResponsePacket extends DataPacket implements Serverbound
 	}
 
 	protected function decodePayload(ByteBufferReader $in) : void{
-	VarInt::readUnsignedInt($in);
-	CommonTypes::getString($in);
+		VarInt::readUnsignedInt($in);
+		CommonTypes::getString($in);
 
 		$this->response = ResourcePackClientResponse::read($in);
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
-	VarInt::writeUnsignedInt($out, $this->response->getType()->value);
-	CommonTypes::putString($out, match($this->response->getType()){
-		ResourcePackClientResponseType::CANCEL => "cancel",
-		ResourcePackClientResponseType::DOWNLOADING => "downloading",
-		ResourcePackClientResponseType::DOWNLOADING_FINISHED => "downloadingfinished",
-		ResourcePackClientResponseType::RESOURCE_PACK_STACK_FINISHED => "resourcepackstackfinished",
-	});
+		VarInt::writeUnsignedInt($out, $this->response->getType()->value);
+			CommonTypes::putString($out, match($this->response->getType()){
+				ResourcePackClientResponseType::CANCEL => "cancel",
+				ResourcePackClientResponseType::DOWNLOADING => "downloading",
+				ResourcePackClientResponseType::DOWNLOADING_FINISHED => "downloadingfinished",
+				ResourcePackClientResponseType::RESOURCE_PACK_STACK_FINISHED => "resourcepackstackfinished",
+		});
 		$this->response->write($out);
 	}
 

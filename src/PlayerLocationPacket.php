@@ -56,7 +56,7 @@ class PlayerLocationPacket extends DataPacket implements ClientboundPacket{
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->actorUniqueId = CommonTypes::getActorUniqueId($in);
 		$this->type = PlayerLocationType::fromPacket(VarInt::readUnsignedInt($in));
-	VarInt::readSignedInt($in); //???
+		VarInt::readSignedInt($in); //???
 
 		if($this->type === PlayerLocationType::PLAYER_LOCATION_COORDINATES){
 			$this->position = CommonTypes::getVector3($in);
@@ -66,7 +66,7 @@ class PlayerLocationPacket extends DataPacket implements ClientboundPacket{
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::putActorUniqueId($out, $this->actorUniqueId);
 		VarInt::writeUnsignedInt($out, $this->type->value);
-	VarInt::writeSignedInt($out, 0);
+		VarInt::writeSignedInt($out, 0);
 
 		if($this->type === PlayerLocationType::PLAYER_LOCATION_COORDINATES){
 			if($this->position === null){ // this should never be the case

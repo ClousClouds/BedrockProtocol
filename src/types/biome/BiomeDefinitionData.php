@@ -79,14 +79,14 @@ final class BiomeDefinitionData{
 		$scale = LE::readFloat($in);
 		$mapWaterColor = Color::fromARGB(LE::readUnsignedInt($in));
 		$rain = CommonTypes::getBool($in);
-		$tags = CommonTypes::readOptional($in, function() use ($in) : array{
-			$tagIndexes = [];
+			$tags = CommonTypes::readOptional($in, function() use ($in) : array{
+				$tagIndexes = [];
 
-			for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; ++$i){
-				$tagIndexes[] = LE::readUnsignedShort($in);
-			}
+				for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; ++$i){
+					$tagIndexes[] = LE::readUnsignedShort($in);
+				}
 
-			return $tagIndexes;
+				return $tagIndexes;
 		});
 		$chunkGenData = CommonTypes::readOptional($in, fn() => BiomeDefinitionChunkGenData::read($in));
 
@@ -115,11 +115,11 @@ final class BiomeDefinitionData{
 		LE::writeFloat($out, $this->scale);
 		LE::writeUnsignedInt($out, $this->mapWaterColor->toARGB());
 		CommonTypes::putBool($out, $this->rain);
-		CommonTypes::writeOptional($out, $this->tagIndexes, function(ByteBufferWriter $out, array $tagIndexes) : void{
-			VarInt::writeUnsignedInt($out, count($tagIndexes));
-			foreach($tagIndexes as $tag){
-				LE::writeUnsignedShort($out, $tag);
-			}
+			CommonTypes::writeOptional($out, $this->tagIndexes, function(ByteBufferWriter $out, array $tagIndexes) : void{
+				VarInt::writeUnsignedInt($out, count($tagIndexes));
+				foreach($tagIndexes as $tag){
+					LE::writeUnsignedShort($out, $tag);
+				}
 		});
 		CommonTypes::writeOptional($out, $this->chunkGenData, fn(ByteBufferWriter $out, BiomeDefinitionChunkGenData $v) => $v->write($out));
 	}

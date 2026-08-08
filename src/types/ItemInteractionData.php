@@ -57,15 +57,15 @@ final class ItemInteractionData{
 			}
 		}
 		$transactionData = new UseItemTransactionData();
-	CommonTypes::getBool($in);
-	CommonTypes::getBool($in);
+		CommonTypes::getBool($in);
+		CommonTypes::getBool($in);
 		$transactionData->decodeAuthInput($in);
 		return new ItemInteractionData($requestId, $requestChangedSlots, $transactionData);
 	}
 
 	public function write(ByteBufferWriter $out) : void{
 		VarInt::writeSignedInt($out, $this->requestId);
-	CommonTypes::putBool($out, $this->requestId !== 0);
+		CommonTypes::putBool($out, $this->requestId !== 0);
 		if($this->requestId !== 0){
 			VarInt::writeUnsignedInt($out, count($this->requestChangedSlots));
 			foreach($this->requestChangedSlots as $changedSlot){
@@ -73,8 +73,8 @@ final class ItemInteractionData{
 			}
 		}
 
-	CommonTypes::putBool($out, true);
-	CommonTypes::putBool($out, true);
+		CommonTypes::putBool($out, true);
+		CommonTypes::putBool($out, true);
 
 		$this->transactionData->encodeAuthInput($out);
 	}
