@@ -86,8 +86,8 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 
 	$hasTrData = CommonTypes::getBool($in);
 	if(!$hasTrData){
-	  $this->trData = null;
-	  return;
+		$this->trData = null;
+		return;
 	}
 		$this->trData->decodeTransaction($in);
 	}
@@ -104,8 +104,8 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 
 		Byte::writeUnsigned($out, $this->trData !== null ? 1 : 0);
 	if($this->trData !== null){
-	  VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
-	  $this->trData->encodeTransaction($out);
+		VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
+		$this->trData->encodeTransaction($out);
 	}
 	}
 

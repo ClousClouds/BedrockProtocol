@@ -202,26 +202,26 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 
 	public function getTick() : int{ return $this->tick; }
 
-  public function getDelta() : Vector3{ return $this->delta; }
+	public function getDelta() : Vector3{ return $this->delta; }
 
-  public function getItemInteractionData() : ?ItemInteractionData{ return $this->itemInteractionData; }
+	public function getItemInteractionData() : ?ItemInteractionData{ return $this->itemInteractionData; }
 
-  public function getItemStackRequest() : ?ItemStackRequest{ return $this->itemStackRequest; }
+	public function getItemStackRequest() : ?ItemStackRequest{ return $this->itemStackRequest; }
 
-  /**
-   * @return PlayerBlockAction[]|null
-   */
-  public function getBlockActions() : ?array{ return $this->blockActions; }
+	/**
+	 * @return PlayerBlockAction[]|null
+	 */
+	public function getBlockActions() : ?array{ return $this->blockActions; }
 
-  public function getVehicleInfo() : ?PlayerAuthInputVehicleInfo{ return $this->vehicleInfo; }
+	public function getVehicleInfo() : ?PlayerAuthInputVehicleInfo{ return $this->vehicleInfo; }
 
-  public function getAnalogMoveVecX() : float{ return $this->analogMoveVecX; }
+	public function getAnalogMoveVecX() : float{ return $this->analogMoveVecX; }
 
-  public function getAnalogMoveVecZ() : float{ return $this->analogMoveVecZ; }
+	public function getAnalogMoveVecZ() : float{ return $this->analogMoveVecZ; }
 
-  public function getCameraOrientation() : Vector3{ return $this->cameraOrientation; }
+	public function getCameraOrientation() : Vector3{ return $this->cameraOrientation; }
 
-  public function getRawMove() : Vector2{ return $this->rawMove; }
+	public function getRawMove() : Vector2{ return $this->rawMove; }
 
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->pitch = LE::readFloat($in);

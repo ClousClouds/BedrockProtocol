@@ -182,8 +182,8 @@ final class CommonTypes{
 			$capeOnClassic,
 			$isPrimaryUser,
 			$override,
-	  $trustedSkinFlag,
-	  $profileHash,
+		$trustedSkinFlag,
+		$profileHash,
 		);
 	}
 
@@ -452,10 +452,10 @@ final class CommonTypes{
 		}
 	}
 
-  private static function writeMetadataProperty(ByteBufferWriter $out, MetadataProperty $property) : void{
+	private static function writeMetadataProperty(ByteBufferWriter $out, MetadataProperty $property) : void{
 		VarInt::writeUnsignedInt($out, $property->getTypeId());
 		$property->write($out);
-  }
+	}
 
 	/** @throws DataDecodeException */
 	public static function getActorUniqueId(ByteBufferReader $in) : int{

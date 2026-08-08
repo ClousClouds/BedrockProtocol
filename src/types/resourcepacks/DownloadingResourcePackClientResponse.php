@@ -52,7 +52,7 @@ final class DownloadingResourcePackClientResponse extends ResourcePackClientResp
 
 	public function write(ByteBufferWriter $out) : void{
 		foreach($this->packIds as $id){
-		  VarInt::writeUnsignedInt($out, count($this->packIds));
+			VarInt::writeUnsignedInt($out, count($this->packIds));
 			CommonTypes::putString($out, $id);
 		}
 	}

@@ -167,6 +167,6 @@ final class ClientData{
 	/** @required */
 	public int $UIProfile;
 
-  /** @required */
+	/** @required */
 	public string $ProfileHash;
 }

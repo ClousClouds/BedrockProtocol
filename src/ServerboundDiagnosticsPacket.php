@@ -52,11 +52,11 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @phpstan-var list<SystemDiagnosticTimingInfo>
 	 */
 	private array $systemDiagnostics = [];
-  /**
-   * @var SystemCategory[]
-   * @phpstan-var list<SystemCategory>
-   */
-  private array $systemCategory = [];
+	/**
+	 * @var SystemCategory[]
+	 * @phpstan-var list<SystemCategory>
+	 */
+	private array $systemCategory = [];
 	/**
 	 * @var WhiskerScopeDataSummary[]
 	 * @phpstan-var list<WhiskerScopeDataSummary>
@@ -146,11 +146,11 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 */
 	public function getSystemDiagnostics() : array{ return $this->systemDiagnostics; }
 
-  /**
-   * @return SystemCategory[]
-   * @phpstan-return list<SystemCategory>
-   */
-  public function getSystemCategory() : array{ return $this->systemCategory; }
+	/**
+	 * @return SystemCategory[]
+	 * @phpstan-return list<SystemCategory>
+	 */
+	public function getSystemCategory() : array{ return $this->systemCategory; }
 
 	/**
 	 * @return WhiskerScopeDataSummary[]

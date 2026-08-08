@@ -37,11 +37,11 @@ final class PlayerAuthInputVehicleInfo{
 		$self = new self();
 
 	if(CommonTypes::getBool($in) && CommonTypes::getBool($in)){
-	  $self->vehicleRotationX = LE::readFloat($in);
-		  $self->vehicleRotationZ = LE::readFloat($in);
+		$self->vehicleRotationX = LE::readFloat($in);
+			$self->vehicleRotationZ = LE::readFloat($in);
 	}
 	if(CommonTypes::getBool($in) && CommonTypes::getBool($in)){
-		  $self->predictedVehicleActorUniqueId = CommonTypes::getActorUniqueId($in);
+			$self->predictedVehicleActorUniqueId = CommonTypes::getActorUniqueId($in);
 	}
 
 		return new $self;
@@ -49,22 +49,22 @@ final class PlayerAuthInputVehicleInfo{
 
 	public function write(ByteBufferWriter $out) : void{
 	if ($this->vehicleRotationX !== null && $this->vehicleRotationZ !== null) {
-	  CommonTypes::putBool($out, true);
-	  CommonTypes::putBool($out, true);
-		  LE::writeFloat($out, $this->vehicleRotationX);
-		  LE::writeFloat($out, $this->vehicleRotationZ);
+		CommonTypes::putBool($out, true);
+		CommonTypes::putBool($out, true);
+			LE::writeFloat($out, $this->vehicleRotationX);
+			LE::writeFloat($out, $this->vehicleRotationZ);
 	}else{
-	  CommonTypes::putBool($out, false);
-	  CommonTypes::putBool($out, false);
+		CommonTypes::putBool($out, false);
+		CommonTypes::putBool($out, false);
 	}
 
 	if($this->predictedVehicleActorUniqueId !== null){
-	  CommonTypes::putBool($out, true);
-	  CommonTypes::putBool($out, true);
-	  CommonTypes::putActorUniqueId($out, $this->predictedVehicleActorUniqueId);
+		CommonTypes::putBool($out, true);
+		CommonTypes::putBool($out, true);
+		CommonTypes::putActorUniqueId($out, $this->predictedVehicleActorUniqueId);
 	}else{
-	  CommonTypes::putBool($out, false);
-	  CommonTypes::putBool($out, false);
+		CommonTypes::putBool($out, false);
+		CommonTypes::putBool($out, false);
 	}
 	}
 }

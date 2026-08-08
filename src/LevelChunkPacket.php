@@ -34,7 +34,7 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 	private int $dimensionId;
 	private int $subChunkCount;
 	private ?int $clientRequestSubChunkLimit = null;
-  private bool $cacheEnabled;
+	private bool $cacheEnabled;
 	/** @var int[] */
 	private array $usedBlobHashes = [];
 	private string $extraPayload;
@@ -72,13 +72,8 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 		return $this->subChunkCount;
 	}
 
-	public function isClientSubChunkRequestsEnabled() : bool{
-		return $this->clientRequestSubChunkLimit !== null;
-	}
-
-	/** @deprecated incorrect name */
-	public function isClientSubChunkRequestEnabled() : bool{
-		return $this->clientRequestSubChunkLimit !== null;
+	public function getClientRequestSubChunkLimit() : ?int{
+		return $this->clientRequestSubChunkLimit;
 	}
 
 	public function isCacheEnabled() : bool{
@@ -99,9 +94,9 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->chunkPosition = ChunkPosition::read($in);
 		$this->dimensionId = VarInt::readSignedInt($in);
-	$this->subChunkCount = VarInt::readUnsignedInt($in);
+		$this->subChunkCount = VarInt::readUnsignedInt($in);
 
-	$this->clientRequestSubChunkLimit = CommonTypes::getBool($in) ? VarInt::readSignedInt($in) : null;
+		$this->clientRequestSubChunkLimit = CommonTypes::getBool($in) ? VarInt::readSignedInt($in) : null;
 
 		$this->cacheEnabled = CommonTypes::getBool($in);
 		$this->usedBlobHashes = [];
@@ -113,24 +108,24 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 			$this->usedBlobHashes[] = LE::readUnsignedLong($in);
 		}
 
-	$this->extraPayload = CommonTypes::getString($in);
+		$this->extraPayload = CommonTypes::getString($in);
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		$this->chunkPosition->write($out);
 		VarInt::writeSignedInt($out, $this->dimensionId);
-	VarInt::writeUnsignedInt($out, $this->subChunkCount);
+		VarInt::writeUnsignedInt($out, $this->subChunkCount);
 
 		CommonTypes::putBool($out, $this->clientRequestSubChunkLimit !== null);
-	if($this->clientRequestSubChunkLimit !== null){
-	  VarInt::writeSignedInt($out, $this->clientRequestSubChunkLimit);
-	}
-	CommonTypes::putBool($out, $this->cacheEnabled);
+		if($this->clientRequestSubChunkLimit !== null){
+			VarInt::writeSignedInt($out, $this->clientRequestSubChunkLimit);
+		}
+		CommonTypes::putBool($out, $this->cacheEnabled);
 
 		VarInt::writeUnsignedInt($out, count($this->usedBlobHashes));
 		foreach($this->usedBlobHashes as $hash){
 			LE::writeUnsignedLong($out, $hash);
-	}
+		}
 
 		CommonTypes::putString($out, $this->extraPayload);
 	}

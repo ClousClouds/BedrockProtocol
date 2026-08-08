@@ -30,7 +30,7 @@ class PlaySoundPacket extends DataPacket implements ClientboundPacket{
 	public float $z;
 	public float $volume;
 	public float $pitch;
-  public int $loopCount = 0;
+	public int $loopCount = 0;
 	public ?int $serverSoundHandle = null;
 
 	/**

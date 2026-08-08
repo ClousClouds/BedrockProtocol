@@ -26,7 +26,7 @@ class TransferPacket extends DataPacket implements ClientboundPacket{
 	public string $address;
 	public int $port = 19132;
 	public bool $reloadWorld;
-  public ?GatheringsConfiguration $gatheringsConfig = null;
+	public ?GatheringsConfiguration $gatheringsConfig = null;
 
 	/**
 	 * @generate-create-func

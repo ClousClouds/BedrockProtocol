@@ -24,7 +24,7 @@ class SkinData{
 	public const ARM_SIZE_SLIM = 0;
 	public const ARM_SIZE_WIDE = 1;
 
-  public const TRUSTED_SKIN_FLAG_UNSET = "unset";
+	public const TRUSTED_SKIN_FLAG_UNSET = "unset";
 	public const TRUSTED_SKIN_FLAG_FALSE = "false";
 	public const TRUSTED_SKIN_FLAG_TRUE = "true";
 
@@ -59,7 +59,7 @@ class SkinData{
 		private bool $isPrimaryUser = true,
 		private bool $override = true,
 	private string $trustedSkinFlag = self::TRUSTED_SKIN_FLAG_TRUE,
-	  private string $profileHash = "",
+		private string $profileHash = "",
 	){
 		$this->capeImage = $capeImage ?? new SkinImage(0, 0, "");
 		//this has to be unique or the client will do stupid things
@@ -151,13 +151,13 @@ class SkinData{
 		return $this->isVerified;
 	}
 
-  public function getTrustedSkinFlag() : string{
+	public function getTrustedSkinFlag() : string{
 		return $this->trustedSkinFlag;
 	}
 
 	public function getProfileHash() : string{
 		return $this->profileHash;
-  }
+	}
 
 	/**
 	 * @internal
@@ -166,7 +166,7 @@ class SkinData{
 		$this->isVerified = $verified;
 	}
 
-  public static function convertArmSize(string $armSize) : int{
+	public static function convertArmSize(string $armSize) : int{
 		return match ($armSize) {
 			"slim" => SkinData::ARM_SIZE_SLIM,
 			"wide", "" => SkinData::ARM_SIZE_WIDE,

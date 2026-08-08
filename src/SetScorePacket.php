@@ -42,34 +42,34 @@ class SetScorePacket extends DataPacket implements ClientboundPacket{
 		$count = VarInt::readUnsignedInt($in);
 		for($i = 0, $i2 = $count; $i < $i2; ++$i){
 			$entry = new ScorePacketEntry();
-	  $entry->type = VarInt::readUnsignedInt($in);
-	  CommonTypes::getString($in);
+		$entry->type = VarInt::readUnsignedInt($in);
+		CommonTypes::getString($in);
 			$entry->scoreboardId = VarInt::readSignedLong($in);
 			switch($entry->type){
 		case ScorePacketEntry::TYPE_REMOVE:
-		  $entry->objectiveName = CommonTypes::readOptional($in, CommonTypes::getString(...));
+			$entry->objectiveName = CommonTypes::readOptional($in, CommonTypes::getString(...));
 				case ScorePacketEntry::TYPE_PLAYER:
 				case ScorePacketEntry::TYPE_ENTITY:
-		  $entry->objectiveName = CommonTypes::getString($in);
-		  $entry->score = LE::readUnsignedInt($in);
+			$entry->objectiveName = CommonTypes::getString($in);
+			$entry->score = LE::readUnsignedInt($in);
 					$entry->actorUniqueId = CommonTypes::getActorUniqueId($in);
 					break;
 				case ScorePacketEntry::TYPE_FAKE_PLAYER:
-		  $entry->objectiveName = CommonTypes::getString($in);
-		  $entry->score = LE::readUnsignedInt($in);
+			$entry->objectiveName = CommonTypes::getString($in);
+			$entry->score = LE::readUnsignedInt($in);
 					$entry->customName = CommonTypes::getString($in);
 					break;
 				default:
 					throw new PacketDecodeException("Unknown entry type $entry->type");
 			}
-		  $this->entries[] = $entry;
+			$this->entries[] = $entry;
 		}
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		VarInt::writeUnsignedInt($out, count($this->entries));
 		foreach($this->entries as $entry){
-	  VarInt::writeUnsignedInt($out, $entry->type);
+		VarInt::writeUnsignedInt($out, $entry->type);
 			CommonTypes::putString($out, match ($entry->type) {
 				ScorePacketEntry::TYPE_REMOVE => "remove",
 				ScorePacketEntry::TYPE_PLAYER => "changeplayer",
@@ -80,16 +80,16 @@ class SetScorePacket extends DataPacket implements ClientboundPacket{
 			VarInt::writeSignedLong($out, $entry->scoreboardId);
 			switch($entry->type){
 		case ScorePacketEntry::TYPE_REMOVE:
-		  CommonTypes::writeOptional($out, $entry->objectiveName, static fn(ByteBufferWriter $out, string $value) => CommonTypes::putString($out, $value));
+			CommonTypes::writeOptional($out, $entry->objectiveName, static fn(ByteBufferWriter $out, string $value) => CommonTypes::putString($out, $value));
 				case ScorePacketEntry::TYPE_PLAYER:
 				case ScorePacketEntry::TYPE_ENTITY:
-		  CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("Objective name must be set for player/entity entry"));
-		  LE::writeUnsignedInt($out, $entry->score);
+			CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("Objective name must be set for player/entity entry"));
+			LE::writeUnsignedInt($out, $entry->score);
 					CommonTypes::putActorUniqueId($out, $entry->actorUniqueId);
 					break;
 				case ScorePacketEntry::TYPE_FAKE_PLAYER:
-		  CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("Objective name must be set for player/entity entry"));
-		  LE::writeUnsignedInt($out, $entry->score);
+			CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("Objective name must be set for player/entity entry"));
+			LE::writeUnsignedInt($out, $entry->score);
 					CommonTypes::putString($out, $entry->customName);
 					break;
 				default:

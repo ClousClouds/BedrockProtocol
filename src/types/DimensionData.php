@@ -38,7 +38,7 @@ final class DimensionData{
 
 	public function getDimensionType() : int{ return $this->dimensionType; }
 
-  public function getPackId() : UuidInterface{ return $this->packId; }
+	public function getPackId() : UuidInterface{ return $this->packId; }
 
 	public static function read(ByteBufferReader $in) : self{
 		$maxHeight = VarInt::readSignedInt($in);

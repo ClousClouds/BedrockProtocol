@@ -21,7 +21,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class PlayerListEntry{
 
-  public int $type;
+	public int $type;
 	public UuidInterface $uuid;
 	public int $actorUniqueId;
 	public string $username;

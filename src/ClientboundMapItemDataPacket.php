@@ -134,12 +134,12 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 				if($object->type === MapTrackedObject::TYPE_BLOCK){
 					if($object->blockPosition === null){
 			throw new \InvalidArgumentException("Block map object has no block position");
-		  }
-		  CommonTypes::putBlockPosition($out, $object->blockPosition);
+			}
+			CommonTypes::putBlockPosition($out, $object->blockPosition);
 				}elseif($object->type === MapTrackedObject::TYPE_ENTITY){
-		  if($object->actorUniqueId === null){
+			if($object->actorUniqueId === null){
 			throw new \InvalidArgumentException("Entity map object has no actor unique ID");
-		  }
+			}
 					CommonTypes::putActorUniqueId($out, $object->actorUniqueId);
 				}else{
 					throw new \InvalidArgumentException("Unknown map object type $object->type");

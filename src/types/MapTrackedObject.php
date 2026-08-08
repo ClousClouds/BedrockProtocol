@@ -22,7 +22,7 @@ use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 class MapTrackedObject{
 	public const TYPE_BLOCK = 0;
 	public const TYPE_ENTITY = 1;
-  public const TYPE_OTHER = 2;
+	public const TYPE_OTHER = 2;
 
 	public int $type;
 	public ?BlockPosition $blockPosition = null;
