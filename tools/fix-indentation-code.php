@@ -98,6 +98,28 @@ function getIndentationLevels(string $content) : array{
 	// collapse to the same level as their own opening line.
 	$caseStackDepthAtEntry = null;
 
+	// Tracks, for the line currently being processed, whether every token
+	// seen so far on this line has been a closing bracket (}, ), ]). While
+	// true, a new closing bracket is allowed to keep updating the line's
+	// level (so a line like "))," that closes multiple nested brackets ends
+	// up at the level of the OUTERMOST bracket it closes, i.e. the last one
+	// processed). As soon as any other token appears on the line, this
+	// flips to false and the line's level is locked in for good - later
+	// closing brackets on that same line must not override the level the
+	// line's first meaningful token already established.
+	$lineStartsWithOnlyClosers = true;
+	$currentTrackedLine = 0;
+
+	$noteToken = function(int $tokLine, bool $isCloser) use (&$currentTrackedLine, &$lineStartsWithOnlyClosers) : void{
+		if($tokLine !== $currentTrackedLine){
+			$currentTrackedLine = $tokLine;
+			$lineStartsWithOnlyClosers = true;
+		}
+		if(!$isCloser){
+			$lineStartsWithOnlyClosers = false;
+		}
+	};
+
 	$getLevel = static function() use (&$stack, &$caseStackDepthAtEntry, &$insideCase) : int{
 		$level = count($stack);
 
@@ -119,24 +141,29 @@ function getIndentationLevels(string $content) : array{
 			}
 
 			if($id === T_COMMENT || $id === T_DOC_COMMENT){
+				$noteToken($line, false);
 				$levels[$line] ??= $getLevel();
 				$line += substr_count($text, "\n");
 				continue;
 			}
 
 			if($id === T_SWITCH){
+				$noteToken($line, false);
 				$lastSignificantKeyword = 'switch';
 				$levels[$line] ??= $getLevel();
 				continue;
 			}
 
 			if($id === T_MATCH){
+				$noteToken($line, false);
 				$lastSignificantKeyword = 'match';
 				$levels[$line] ??= $getLevel();
 				continue;
 			}
 
 			if($id === T_CASE || $id === T_DEFAULT){
+				$noteToken($line, false);
+
 				// Only treat this as a switch case label if we're currently
 				// inside a switch body (not inside a match() expression,
 				// where `default` is just an arm, not a case label).
@@ -154,11 +181,13 @@ function getIndentationLevels(string $content) : array{
 			}
 
 			if($id === T_FUNCTION || $id === T_FN || $id === T_CLASS){
+				$noteToken($line, false);
 				$lastSignificantKeyword = null;
 				$levels[$line] ??= $getLevel();
 				continue;
 			}
 
+			$noteToken($line, false);
 			$levels[$line] ??= $getLevel();
 			continue;
 		}
@@ -171,6 +200,7 @@ function getIndentationLevels(string $content) : array{
 		}
 
 		if($text === '{'){
+			$noteToken($line, false);
 			$levels[$line] ??= $getLevel();
 			$stack[] = '{';
 			// Only the '{' that immediately follows switch(...)/match(...) at
@@ -184,6 +214,7 @@ function getIndentationLevels(string $content) : array{
 		}
 
 		if($text === '(' || $text === '['){
+			$noteToken($line, false);
 			$levels[$line] ??= $getLevel();
 			$stack[] = $text;
 			continue;
@@ -216,9 +247,26 @@ function getIndentationLevels(string $content) : array{
 				}
 			}
 
-			$levels[$line] = $getLevel();
+			// A run of closing brackets at the START of a line (nothing else
+			// seen yet on this line) keeps updating the line's level as each
+			// bracket closes, so the line ends up at the level of the LAST
+			// (outermost) bracket it closes - e.g. "), $x);" closing both an
+			// inner call and its outer call lands at the outer call's level.
+			// Once a non-closer token has appeared on the line, the line's
+			// level is already locked by that earlier token and must not be
+			// overridden by a later closing bracket on the same line.
+			$wasLineStillOnlyClosers = $lineStartsWithOnlyClosers && $line === $currentTrackedLine;
+			$noteToken($line, true);
+
+			if($lineStartsWithOnlyClosers){
+				$levels[$line] = $getLevel();
+			}else{
+				$levels[$line] ??= $getLevel();
+			}
 			continue;
 		}
+
+		$noteToken($line, false);
 
 		if(trim($text) !== ''){
 			$levels[$line] ??= $getLevel();

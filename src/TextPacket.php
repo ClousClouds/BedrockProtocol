@@ -116,7 +116,7 @@ class TextPacket extends DataPacket implements ClientboundPacket, ServerboundPac
 				/** @noinspection PhpMissingBreakStatementInspection */
 			case self::TYPE_ANNOUNCEMENT:
 				if($category !== self::CATEGORY_AUTHORED_MESSAGE){
-				throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_AUTHORED_MESSAGE");
+					throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_AUTHORED_MESSAGE");
 		}
 		$this->sourceName = CommonTypes::getString($in);
 		$this->message = CommonTypes::getString($in);
@@ -128,7 +128,7 @@ class TextPacket extends DataPacket implements ClientboundPacket, ServerboundPac
 		case self::TYPE_JSON:
 		case self::TYPE_JSON_ANNOUNCEMENT:
 		if($category !== self::CATEGORY_MESSAGE_ONLY){
-		throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_ONLY");
+			throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_ONLY");
 	}
 	$this->message = CommonTypes::getString($in);
 	break;
@@ -136,7 +136,7 @@ class TextPacket extends DataPacket implements ClientboundPacket, ServerboundPac
 	case self::TYPE_POPUP:
 	case self::TYPE_JUKEBOX_POPUP:
 	if($category !== self::CATEGORY_MESSAGE_WITH_PARAMETERS){
-	throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_WITH_PARAMETERS");
+		throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_WITH_PARAMETERS");
 }
 $this->message = CommonTypes::getString($in);
 $count = VarInt::readUnsignedInt($in);

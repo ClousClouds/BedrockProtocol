@@ -73,7 +73,7 @@ final class BiomeDefinitionChunkGenData{
 		$overworldGenRules = CommonTypes::readOptional($in, fn() => BiomeOverworldGenRulesData::read($in));
 		$multinoiseGenRules = CommonTypes::readOptional($in, fn() => BiomeMultinoiseGenRulesData::read($in));
 		$legacyWorldGenRules = CommonTypes::readOptional($in, fn() => BiomeLegacyWorldGenRulesData::read($in));
-			$replacementsData = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
+		$replacementsData = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
 				$count = VarInt::readUnsignedInt($in);
 				$result = [];
 				for($i = 0; $i < $count; ++$i){
@@ -108,7 +108,7 @@ final class BiomeDefinitionChunkGenData{
 		CommonTypes::writeOptional($out, $this->overworldGenRules, fn(ByteBufferWriter $out, BiomeOverworldGenRulesData $v) => $v->write($out));
 		CommonTypes::writeOptional($out, $this->multinoiseGenRules, fn(ByteBufferWriter $out, BiomeMultinoiseGenRulesData $v) => $v->write($out));
 		CommonTypes::writeOptional($out, $this->legacyWorldGenRules, fn(ByteBufferWriter $out, BiomeLegacyWorldGenRulesData $v) => $v->write($out));
-			CommonTypes::writeOptional($out, $this->replacementsData, function(ByteBufferWriter $out, array $v) : void{
+		CommonTypes::writeOptional($out, $this->replacementsData, function(ByteBufferWriter $out, array $v) : void{
 				VarInt::writeUnsignedInt($out, count($v));
 				foreach($v as $item){
 					$item->write($out);

@@ -70,7 +70,7 @@ class SetScorePacket extends DataPacket implements ClientboundPacket{
 		VarInt::writeUnsignedInt($out, count($this->entries));
 		foreach($this->entries as $entry){
 			VarInt::writeUnsignedInt($out, $entry->type);
-				CommonTypes::putString($out, match ($entry->type) {
+			CommonTypes::putString($out, match ($entry->type) {
 					ScorePacketEntry::TYPE_REMOVE => "remove",
 					ScorePacketEntry::TYPE_PLAYER => "changeplayer",
 					ScorePacketEntry::TYPE_ENTITY => "changeentity",

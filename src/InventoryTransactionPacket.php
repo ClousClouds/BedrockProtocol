@@ -60,7 +60,7 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->requestId = CommonTypes::readLegacyItemStackRequestId($in);
 
-			$this->requestChangedSlots = CommonTypes::readOptional($in, static function(ByteBufferReader $in) : array{
+		$this->requestChangedSlots = CommonTypes::readOptional($in, static function(ByteBufferReader $in) : array{
 				$result = [];
 				for($i = 0, $len = VarInt::readUnsignedInt($in); $i < $len; ++$i){
 					$result[] = InventoryTransactionChangedSlotsHack::read($in);
@@ -95,7 +95,7 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::writeLegacyItemStackRequestId($out, $this->requestId);
 
-			CommonTypes::writeOptional($out, $this->requestChangedSlots, static function(ByteBufferWriter $out, array $value) : void{
+		CommonTypes::writeOptional($out, $this->requestChangedSlots, static function(ByteBufferWriter $out, array $value) : void{
 				VarInt::writeUnsignedInt($out, count($value));
 				foreach($value as $changedSlots){
 					$changedSlots->write($out);

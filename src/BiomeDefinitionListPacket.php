@@ -71,7 +71,7 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 			return $stringIndexLookup[$string];
 		};
 
-			$definitionData = array_map(fn(BiomeDefinitionEntry $entry) => new BiomeDefinitionData(
+		$definitionData = array_map(fn(BiomeDefinitionEntry $entry) => new BiomeDefinitionData(
 				$addString($entry->getBiomeName()),
 				$entry->getId(),
 				$entry->getTemperature(),
@@ -83,7 +83,7 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 				$entry->hasRain(),
 				($v = $entry->getTags()) === null ? null : array_map($addString, $v),
 				$entry->getChunkGenData(),
-		), $definitions);
+			), $definitions);
 
 		return self::create($definitionData, $strings);
 	}
@@ -104,7 +104,7 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 	 * @throws PacketDecodeException
 	 */
 	public function buildDefinitionsFromData() : array{
-			return array_map(fn(BiomeDefinitionData $data) => new BiomeDefinitionEntry(
+		return array_map(fn(BiomeDefinitionData $data) => new BiomeDefinitionEntry(
 				$this->locateString($data->getNameIndex()),
 				$data->getId(),
 				$data->getTemperature(),
@@ -116,7 +116,7 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 				$data->hasRain(),
 				($tagIndexes = $data->getTagIndexes()) === null ? null : array_map($this->locateString(...), $tagIndexes),
 				$data->getChunkGenData(),
-		), $this->definitionData);
+			), $this->definitionData);
 	}
 
 	/**

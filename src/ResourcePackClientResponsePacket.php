@@ -48,7 +48,7 @@ class ResourcePackClientResponsePacket extends DataPacket implements Serverbound
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		VarInt::writeUnsignedInt($out, $this->response->getType()->value);
-			CommonTypes::putString($out, match($this->response->getType()){
+		CommonTypes::putString($out, match($this->response->getType()){
 				ResourcePackClientResponseType::CANCEL => "cancel",
 				ResourcePackClientResponseType::DOWNLOADING => "downloading",
 				ResourcePackClientResponseType::DOWNLOADING_FINISHED => "downloadingfinished",

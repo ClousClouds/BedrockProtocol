@@ -56,7 +56,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 		$this->isLocked = CommonTypes::getBool($in);
 		$this->origin = CommonTypes::getBlockPosition($in);
 
-			$this->parentMapIds = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
+		$this->parentMapIds = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
 				$ids = [];
 				for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; ++$i){
 					$ids[] = CommonTypes::getActorUniqueId($in);
@@ -66,7 +66,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 
 		$this->scale = CommonTypes::readOptional($in, Byte::readUnsigned(...));
 
-			$this->trackedEntities = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
+		$this->trackedEntities = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
 				$entities = [];
 				for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; ++$i){
 					$object = new MapTrackedObject();
@@ -83,7 +83,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 				return $entities;
 		});
 
-			$this->decorations = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
+		$this->decorations = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
 				$decorations = [];
 				for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; ++$i){
 					$icon = Byte::readUnsigned($in);
@@ -97,7 +97,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 				return $decorations;
 		});
 
-			$this->colors = CommonTypes::readOptional($in, function(ByteBufferReader $in) : MapImage{
+		$this->colors = CommonTypes::readOptional($in, function(ByteBufferReader $in) : MapImage{
 				$width = VarInt::readSignedInt($in);
 				$height = VarInt::readSignedInt($in);
 				$this->xOffset = VarInt::readSignedInt($in);
@@ -118,7 +118,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 		CommonTypes::putBool($out, $this->isLocked);
 		CommonTypes::putBlockPosition($out, $this->origin);
 
-			CommonTypes::writeOptional($out, $this->parentMapIds, function(ByteBufferWriter $out, array $parentMapIds) : void{
+		CommonTypes::writeOptional($out, $this->parentMapIds, function(ByteBufferWriter $out, array $parentMapIds) : void{
 				VarInt::writeUnsignedInt($out, count($parentMapIds));
 				foreach($parentMapIds as $parentMapId){
 					CommonTypes::putActorUniqueId($out, $parentMapId);
@@ -127,7 +127,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 
 		CommonTypes::writeOptional($out, $this->scale, Byte::writeUnsigned(...));
 
-			CommonTypes::writeOptional($out, $this->trackedEntities, function(ByteBufferWriter $out, array $trackedEntities) : void{
+		CommonTypes::writeOptional($out, $this->trackedEntities, function(ByteBufferWriter $out, array $trackedEntities) : void{
 				VarInt::writeUnsignedInt($out, count($trackedEntities));
 				foreach($trackedEntities as $object){
 					LE::writeUnsignedInt($out, $object->type);
@@ -147,7 +147,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 				}
 		});
 
-			CommonTypes::writeOptional($out, $this->decorations, function(ByteBufferWriter $out, array $decorations) : void{
+		CommonTypes::writeOptional($out, $this->decorations, function(ByteBufferWriter $out, array $decorations) : void{
 				VarInt::writeUnsignedInt($out, count($decorations));
 				foreach($decorations as $decoration){
 					Byte::writeUnsigned($out, $decoration->getIcon());
@@ -159,7 +159,7 @@ class ClientboundMapItemDataPacket extends DataPacket implements ClientboundPack
 				}
 		});
 
-			CommonTypes::writeOptional($out, $this->colors, function(ByteBufferWriter $out, MapImage $colors) : void{
+		CommonTypes::writeOptional($out, $this->colors, function(ByteBufferWriter $out, MapImage $colors) : void{
 				VarInt::writeSignedInt($out, $colors->getWidth());
 				VarInt::writeSignedInt($out, $colors->getHeight());
 				VarInt::writeSignedInt($out, $this->xOffset ?? 0);
