@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types\resourcepacks;
 
-use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
-use pmmp\encoding\LE;
+use pmmp\encoding\VarInt;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use function count;
 
@@ -42,11 +41,9 @@ final class DownloadingResourcePackClientResponse extends ResourcePackClientResp
 	}
 
 	public static function read(ByteBufferReader $in) : static{
-		Byte::readUnsigned($in);
-
 		$packIds = [];
 
-		for($i = 0, $count = LE::readUnsignedShort($in); $i < $count; ++$i){
+		for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; ++$i){
 			$packIds[] = CommonTypes::getString($in);
 		}
 
@@ -54,11 +51,8 @@ final class DownloadingResourcePackClientResponse extends ResourcePackClientResp
 	}
 
 	public function write(ByteBufferWriter $out) : void{
-		Byte::writeUnsigned($out, $this->getType()->value);
-
-		LE::writeUnsignedShort($out, count($this->packIds));
-
 		foreach($this->packIds as $id){
+		  VarInt::writeUnsignedInt($out, count($this->packIds));
 			CommonTypes::putString($out, $id);
 		}
 	}

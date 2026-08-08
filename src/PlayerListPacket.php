@@ -17,6 +17,7 @@ namespace pocketmine\network\mcpe\protocol;
 use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\DataDecodeException;
 use pmmp\encoding\LE;
 use pmmp\encoding\VarInt;
 use pocketmine\color\Color;
@@ -27,10 +28,9 @@ use function count;
 class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	public const NETWORK_ID = ProtocolInfo::PLAYER_LIST_PACKET;
 
-	public const TYPE_ADD = 0;
-	public const TYPE_REMOVE = 1;
+	public const TYPE_REMOVE = 0;
+	public const TYPE_ADD = 1;
 
-	public int $type;
 	/** @var PlayerListEntry[] */
 	public array $entries = [];
 
@@ -38,9 +38,8 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	 * @generate-create-func
 	 * @param PlayerListEntry[] $entries
 	 */
-	private static function create(int $type, array $entries) : self{
+	private static function create(array $entries) : self{
 		$result = new self;
-		$result->type = $type;
 		$result->entries = $entries;
 		return $result;
 	}
@@ -49,23 +48,30 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	 * @param PlayerListEntry[] $entries
 	 */
 	public static function add(array $entries) : self{
-		return self::create(self::TYPE_ADD, $entries);
+	foreach($entries as $entry){
+	  $entry->type = self::TYPE_ADD;
+	}
+		return self::create($entries);
 	}
 
 	/**
 	 * @param PlayerListEntry[] $entries
 	 */
 	public static function remove(array $entries) : self{
-		return self::create(self::TYPE_REMOVE, $entries);
+		foreach($entries as $entry){
+	  $entry->type = self::TYPE_REMOVE;
+	}
+		return self::create($entries);
 	}
 
 	protected function decodePayload(ByteBufferReader $in) : void{
-		$this->type = Byte::readUnsigned($in);
 		$count = VarInt::readUnsignedInt($in);
 		for($i = 0; $i < $count; ++$i){
 			$entry = new PlayerListEntry();
+	  $entry->type = VarInt::readUnsignedInt($in);
+	  Byte::readUnsigned($in); // legacyid
 
-			if($this->type === self::TYPE_ADD){
+			if($entry->type === self::TYPE_ADD){
 				$entry->uuid = CommonTypes::getUUID($in);
 				$entry->actorUniqueId = CommonTypes::getActorUniqueId($in);
 				$entry->username = CommonTypes::getString($in);
@@ -77,24 +83,22 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 				$entry->isHost = CommonTypes::getBool($in);
 				$entry->isSubClient = CommonTypes::getBool($in);
 				$entry->color = Color::fromARGB(LE::readUnsignedInt($in));
-			}else{
+			}elseif($entry->type === self::TYPE_REMOVE){
 				$entry->uuid = CommonTypes::getUUID($in);
-			}
+			}else{
+		throw new DataDecodeException("Unknown player list entry type " . $entry->type);
+	  }
 
 			$this->entries[$i] = $entry;
-		}
-		if($this->type === self::TYPE_ADD){
-			for($i = 0; $i < $count; ++$i){
-				$this->entries[$i]->skinData->setVerified(CommonTypes::getBool($in));
-			}
 		}
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
-		Byte::writeUnsigned($out, $this->type);
 		VarInt::writeUnsignedInt($out, count($this->entries));
 		foreach($this->entries as $entry){
-			if($this->type === self::TYPE_ADD){
+	  VarInt::writeUnsignedInt($out, $entry->type);
+	  Byte::writeUnsigned($out, $entry->type === self::TYPE_ADD ? 0 : 1);
+			if($entry->type === self::TYPE_ADD){
 				CommonTypes::putUUID($out, $entry->uuid);
 				CommonTypes::putActorUniqueId($out, $entry->actorUniqueId);
 				CommonTypes::putString($out, $entry->username);
@@ -106,14 +110,11 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 				CommonTypes::putBool($out, $entry->isHost);
 				CommonTypes::putBool($out, $entry->isSubClient);
 				LE::writeUnsignedInt($out, ($entry->color ?? new Color(255, 255, 255))->toARGB());
-			}else{
+			}elseif($entry->type === self::TYPE_REMOVE){
 				CommonTypes::putUUID($out, $entry->uuid);
-			}
-		}
-		if($this->type === self::TYPE_ADD){
-			foreach($this->entries as $entry){
-				CommonTypes::putBool($out, $entry->skinData->isVerified());
-			}
+			}else{
+		throw new \InvalidArgumentException("Unknown player list entry type " . $entry->type);
+	  }
 		}
 	}
 

@@ -43,13 +43,13 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 	public int $requestId;
 	/** @var InventoryTransactionChangedSlotsHack[] */
 	public ?array $requestChangedSlots;
-	public TransactionData $trData;
+	public ?TransactionData $trData;
 
 	/**
 	 * @generate-create-func
 	 * @param InventoryTransactionChangedSlotsHack[] $requestChangedSlots
 	 */
-	public static function create(int $requestId, ?array $requestChangedSlots, TransactionData $trData) : self{
+	public static function create(int $requestId, ?array $requestChangedSlots, ?TransactionData $trData) : self{
 		$result = new self;
 		$result->requestId = $requestId;
 		$result->requestChangedSlots = $requestChangedSlots;
@@ -83,6 +83,12 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 			ReleaseItemTransactionData::ID => new ReleaseItemTransactionData(),
 			default => throw new PacketDecodeException("Unknown transaction type $transactionType"),
 		};
+
+	$hasTrData = CommonTypes::getBool($in);
+	if(!$hasTrData){
+	  $this->trData = null;
+	  return;
+	}
 		$this->trData->decodeTransaction($in);
 	}
 
@@ -96,10 +102,11 @@ class InventoryTransactionPacket extends DataPacket implements ClientboundPacket
 			}
 		});
 
-		Byte::writeUnsigned($out, 1);
-		VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
-		Byte::writeUnsigned($out, 1);
-		$this->trData->encodeTransaction($out);
+		Byte::writeUnsigned($out, $this->trData !== null ? 1 : 0);
+	if($this->trData !== null){
+	  VarInt::writeUnsignedInt($out, $this->trData->getTypeId());
+	  $this->trData->encodeTransaction($out);
+	}
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

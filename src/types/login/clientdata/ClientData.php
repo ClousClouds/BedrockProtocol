@@ -26,7 +26,7 @@ final class ClientData{
 	public array $AnimatedImageData;
 
 	/** @required */
-	public string $ArmSize;
+	public int $ArmSize;
 
 	/** @required */
 	public string $CapeData;
@@ -135,7 +135,7 @@ final class ClientData{
 	public string $SkinAnimationData;
 
 	/** @required */
-	public string $SkinColor;
+	public int $SkinColor;
 
 	/** @required */
 	public string $SkinData;
@@ -166,4 +166,7 @@ final class ClientData{
 
 	/** @required */
 	public int $UIProfile;
+
+  /** @required */
+	public string $ProfileHash;
 }

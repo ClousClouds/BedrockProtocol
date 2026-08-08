@@ -21,7 +21,7 @@ final class PersonaPieceTintColor{
 	public const PIECE_TYPE_PERSONA_MOUTH = "persona_mouth";
 
 	/**
-	 * @param string[] $colors
+	 * @param int[] $colors
 	 */
 	public function __construct(
 		private string $pieceType,
@@ -33,7 +33,7 @@ final class PersonaPieceTintColor{
 	}
 
 	/**
-	 * @return string[]
+	 * @return int[]
 	 */
 	public function getColors() : array{
 		return $this->colors;
