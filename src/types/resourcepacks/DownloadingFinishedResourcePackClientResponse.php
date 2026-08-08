@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types\resourcepacks;
 
-use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
 
