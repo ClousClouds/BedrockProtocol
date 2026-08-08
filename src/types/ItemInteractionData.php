@@ -17,6 +17,7 @@ namespace pocketmine\network\mcpe\protocol\types;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
 use pmmp\encoding\VarInt;
+use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\types\inventory\InventoryTransactionChangedSlotsHack;
 use pocketmine\network\mcpe\protocol\types\inventory\UseItemTransactionData;
 use function count;
@@ -49,25 +50,32 @@ final class ItemInteractionData{
 	public static function read(ByteBufferReader $in) : self{
 		$requestId = VarInt::readSignedInt($in);
 		$requestChangedSlots = [];
-		if($requestId !== 0){
+		if(CommonTypes::getBool($in)){
 			$len = VarInt::readUnsignedInt($in);
 			for($i = 0; $i < $len; ++$i){
 				$requestChangedSlots[] = InventoryTransactionChangedSlotsHack::read($in);
 			}
 		}
 		$transactionData = new UseItemTransactionData();
+		CommonTypes::getBool($in);
+		CommonTypes::getBool($in);
 		$transactionData->decodeAuthInput($in);
 		return new ItemInteractionData($requestId, $requestChangedSlots, $transactionData);
 	}
 
 	public function write(ByteBufferWriter $out) : void{
 		VarInt::writeSignedInt($out, $this->requestId);
+		CommonTypes::putBool($out, $this->requestId !== 0);
 		if($this->requestId !== 0){
 			VarInt::writeUnsignedInt($out, count($this->requestChangedSlots));
 			foreach($this->requestChangedSlots as $changedSlot){
 				$changedSlot->write($out);
 			}
 		}
+
+		CommonTypes::putBool($out, true);
+		CommonTypes::putBool($out, true);
+
 		$this->transactionData->encodeAuthInput($out);
 	}
 }

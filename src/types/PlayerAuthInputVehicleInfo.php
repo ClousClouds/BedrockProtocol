@@ -22,28 +22,49 @@ use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 final class PlayerAuthInputVehicleInfo{
 
 	public function __construct(
-		private float $vehicleRotationX,
-		private float $vehicleRotationZ,
-		private int $predictedVehicleActorUniqueId
+		private ?float $vehicleRotationX = null,
+		private ?float $vehicleRotationZ = null,
+		private ?int $predictedVehicleActorUniqueId = null
 	){}
 
-	public function getVehicleRotationX() : float{ return $this->vehicleRotationX; }
+	public function getVehicleRotationX() : ?float{ return $this->vehicleRotationX; }
 
-	public function getVehicleRotationZ() : float{ return $this->vehicleRotationZ; }
+	public function getVehicleRotationZ() : ?float{ return $this->vehicleRotationZ; }
 
-	public function getPredictedVehicleActorUniqueId() : int{ return $this->predictedVehicleActorUniqueId; }
+	public function getPredictedVehicleActorUniqueId() : ?int{ return $this->predictedVehicleActorUniqueId; }
 
 	public static function read(ByteBufferReader $in) : self{
-		$vehicleRotationX = LE::readFloat($in);
-		$vehicleRotationZ = LE::readFloat($in);
-		$predictedVehicleActorUniqueId = CommonTypes::getActorUniqueId($in);
+		$self = new self();
 
-		return new self($vehicleRotationX, $vehicleRotationZ, $predictedVehicleActorUniqueId);
+		if(CommonTypes::getBool($in) && CommonTypes::getBool($in)){
+			$self->vehicleRotationX = LE::readFloat($in);
+			$self->vehicleRotationZ = LE::readFloat($in);
+		}
+		if(CommonTypes::getBool($in) && CommonTypes::getBool($in)){
+			$self->predictedVehicleActorUniqueId = CommonTypes::getActorUniqueId($in);
+		}
+
+		return new $self;
 	}
 
 	public function write(ByteBufferWriter $out) : void{
-		LE::writeFloat($out, $this->vehicleRotationX);
-		LE::writeFloat($out, $this->vehicleRotationZ);
-		CommonTypes::putActorUniqueId($out, $this->predictedVehicleActorUniqueId);
+		if ($this->vehicleRotationX !== null && $this->vehicleRotationZ !== null) {
+			CommonTypes::putBool($out, true);
+			CommonTypes::putBool($out, true);
+			LE::writeFloat($out, $this->vehicleRotationX);
+			LE::writeFloat($out, $this->vehicleRotationZ);
+		}else{
+			CommonTypes::putBool($out, false);
+			CommonTypes::putBool($out, false);
+		}
+
+		if($this->predictedVehicleActorUniqueId !== null){
+			CommonTypes::putBool($out, true);
+			CommonTypes::putBool($out, true);
+			CommonTypes::putActorUniqueId($out, $this->predictedVehicleActorUniqueId);
+		}else{
+			CommonTypes::putBool($out, false);
+			CommonTypes::putBool($out, false);
+		}
 	}
 }

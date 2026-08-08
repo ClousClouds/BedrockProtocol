@@ -72,18 +72,18 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 		};
 
 		$definitionData = array_map(fn(BiomeDefinitionEntry $entry) => new BiomeDefinitionData(
-			$addString($entry->getBiomeName()),
-			$entry->getId(),
-			$entry->getTemperature(),
-			$entry->getDownfall(),
-			$entry->getFoliageSnow(),
-			$entry->getDepth(),
-			$entry->getScale(),
-			$entry->getMapWaterColor(),
-			$entry->hasRain(),
-			($v = $entry->getTags()) === null ? null : array_map($addString, $v),
-			$entry->getChunkGenData(),
-		), $definitions);
+				$addString($entry->getBiomeName()),
+				$entry->getId(),
+				$entry->getTemperature(),
+				$entry->getDownfall(),
+				$entry->getFoliageSnow(),
+				$entry->getDepth(),
+				$entry->getScale(),
+				$entry->getMapWaterColor(),
+				$entry->hasRain(),
+				($v = $entry->getTags()) === null ? null : array_map($addString, $v),
+				$entry->getChunkGenData(),
+			), $definitions);
 
 		return self::create($definitionData, $strings);
 	}
@@ -105,18 +105,18 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 	 */
 	public function buildDefinitionsFromData() : array{
 		return array_map(fn(BiomeDefinitionData $data) => new BiomeDefinitionEntry(
-			$this->locateString($data->getNameIndex()),
-			$data->getId(),
-			$data->getTemperature(),
-			$data->getDownfall(),
-			$data->getFoliageSnow(),
-			$data->getDepth(),
-			$data->getScale(),
-			$data->getMapWaterColor(),
-			$data->hasRain(),
-			($tagIndexes = $data->getTagIndexes()) === null ? null : array_map($this->locateString(...), $tagIndexes),
-			$data->getChunkGenData(),
-		), $this->definitionData);
+				$this->locateString($data->getNameIndex()),
+				$data->getId(),
+				$data->getTemperature(),
+				$data->getDownfall(),
+				$data->getFoliageSnow(),
+				$data->getDepth(),
+				$data->getScale(),
+				$data->getMapWaterColor(),
+				$data->hasRain(),
+				($tagIndexes = $data->getTagIndexes()) === null ? null : array_map($this->locateString(...), $tagIndexes),
+				$data->getChunkGenData(),
+			), $this->definitionData);
 	}
 
 	/**

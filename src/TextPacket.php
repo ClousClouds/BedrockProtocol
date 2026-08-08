@@ -113,100 +113,100 @@ class TextPacket extends DataPacket implements ClientboundPacket, ServerboundPac
 		switch($this->type){
 			case self::TYPE_CHAT:
 			case self::TYPE_WHISPER:
-			/** @noinspection PhpMissingBreakStatementInspection */
+				/** @noinspection PhpMissingBreakStatementInspection */
 			case self::TYPE_ANNOUNCEMENT:
 				if($category !== self::CATEGORY_AUTHORED_MESSAGE){
 					throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_AUTHORED_MESSAGE");
-				}
-				$this->sourceName = CommonTypes::getString($in);
-				$this->message = CommonTypes::getString($in);
-				break;
-			case self::TYPE_RAW:
-			case self::TYPE_TIP:
-			case self::TYPE_SYSTEM:
-			case self::TYPE_JSON_WHISPER:
-			case self::TYPE_JSON:
-			case self::TYPE_JSON_ANNOUNCEMENT:
-				if($category !== self::CATEGORY_MESSAGE_ONLY){
-					throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_ONLY");
-				}
-				$this->message = CommonTypes::getString($in);
-				break;
-			case self::TYPE_TRANSLATION:
-			case self::TYPE_POPUP:
-			case self::TYPE_JUKEBOX_POPUP:
-				if($category !== self::CATEGORY_MESSAGE_WITH_PARAMETERS){
-					throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_WITH_PARAMETERS");
-				}
-				$this->message = CommonTypes::getString($in);
-				$count = VarInt::readUnsignedInt($in);
-				for($i = 0; $i < $count; ++$i){
-					$this->parameters[] = CommonTypes::getString($in);
-				}
-				break;
 		}
-
-		$this->xboxUserId = CommonTypes::getString($in);
-		$this->platformChatId = CommonTypes::getString($in);
-		$this->filteredMessage = CommonTypes::readOptional($in, CommonTypes::getString(...));
+		$this->sourceName = CommonTypes::getString($in);
+		$this->message = CommonTypes::getString($in);
+		break;
+		case self::TYPE_RAW:
+		case self::TYPE_TIP:
+		case self::TYPE_SYSTEM:
+		case self::TYPE_JSON_WHISPER:
+		case self::TYPE_JSON:
+		case self::TYPE_JSON_ANNOUNCEMENT:
+		if($category !== self::CATEGORY_MESSAGE_ONLY){
+			throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_ONLY");
 	}
+	$this->message = CommonTypes::getString($in);
+	break;
+	case self::TYPE_TRANSLATION:
+	case self::TYPE_POPUP:
+	case self::TYPE_JUKEBOX_POPUP:
+	if($category !== self::CATEGORY_MESSAGE_WITH_PARAMETERS){
+		throw new PacketDecodeException("Decoded TextPacket has invalid structure: type {$this->type} requires category CATEGORY_MESSAGE_WITH_PARAMETERS");
+}
+$this->message = CommonTypes::getString($in);
+$count = VarInt::readUnsignedInt($in);
+for($i = 0; $i < $count; ++$i){
+	$this->parameters[] = CommonTypes::getString($in);
+}
+break;
+}
 
-	protected function encodePayload(ByteBufferWriter $out) : void{
-		CommonTypes::putBool($out, $this->needsTranslation);
+$this->xboxUserId = CommonTypes::getString($in);
+$this->platformChatId = CommonTypes::getString($in);
+$this->filteredMessage = CommonTypes::readOptional($in, CommonTypes::getString(...));
+}
 
-		$category = match ($this->type) {
-			self::TYPE_RAW,
-			self::TYPE_TIP,
-			self::TYPE_SYSTEM,
-			self::TYPE_JSON_WHISPER,
-			self::TYPE_JSON_ANNOUNCEMENT,
-			self::TYPE_JSON => self::CATEGORY_MESSAGE_ONLY,
+protected function encodePayload(ByteBufferWriter $out) : void{
+	CommonTypes::putBool($out, $this->needsTranslation);
 
-			self::TYPE_CHAT,
-			self::TYPE_WHISPER,
-			self::TYPE_ANNOUNCEMENT => self::CATEGORY_AUTHORED_MESSAGE,
+	$category = match ($this->type) {
+		self::TYPE_RAW,
+		self::TYPE_TIP,
+		self::TYPE_SYSTEM,
+		self::TYPE_JSON_WHISPER,
+		self::TYPE_JSON_ANNOUNCEMENT,
+		self::TYPE_JSON => self::CATEGORY_MESSAGE_ONLY,
 
-			self::TYPE_TRANSLATION,
-			self::TYPE_POPUP,
-			self::TYPE_JUKEBOX_POPUP => self::CATEGORY_MESSAGE_WITH_PARAMETERS,
+		self::TYPE_CHAT,
+		self::TYPE_WHISPER,
+		self::TYPE_ANNOUNCEMENT => self::CATEGORY_AUTHORED_MESSAGE,
 
-			default => throw new \LogicException("Invalid TextPacket type: $this->type")
-		};
+		self::TYPE_TRANSLATION,
+		self::TYPE_POPUP,
+		self::TYPE_JUKEBOX_POPUP => self::CATEGORY_MESSAGE_WITH_PARAMETERS,
 
-		Byte::writeUnsigned($out, $category);
-		Byte::writeUnsigned($out, $this->type);
-		switch($this->type){
-			case self::TYPE_CHAT:
-			case self::TYPE_WHISPER:
+		default => throw new \LogicException("Invalid TextPacket type: $this->type")
+	};
+
+	Byte::writeUnsigned($out, $category);
+	Byte::writeUnsigned($out, $this->type);
+	switch($this->type){
+		case self::TYPE_CHAT:
+		case self::TYPE_WHISPER:
 			/** @noinspection PhpMissingBreakStatementInspection */
-			case self::TYPE_ANNOUNCEMENT:
-				CommonTypes::putString($out, $this->sourceName);
-			case self::TYPE_RAW:
-			case self::TYPE_TIP:
-			case self::TYPE_SYSTEM:
-			case self::TYPE_JSON_WHISPER:
-			case self::TYPE_JSON:
-			case self::TYPE_JSON_ANNOUNCEMENT:
-				CommonTypes::putString($out, $this->message);
-				break;
+		case self::TYPE_ANNOUNCEMENT:
+			CommonTypes::putString($out, $this->sourceName);
+		case self::TYPE_RAW:
+		case self::TYPE_TIP:
+		case self::TYPE_SYSTEM:
+		case self::TYPE_JSON_WHISPER:
+		case self::TYPE_JSON:
+		case self::TYPE_JSON_ANNOUNCEMENT:
+			CommonTypes::putString($out, $this->message);
+			break;
 
-			case self::TYPE_TRANSLATION:
-			case self::TYPE_POPUP:
-			case self::TYPE_JUKEBOX_POPUP:
-				CommonTypes::putString($out, $this->message);
-				VarInt::writeUnsignedInt($out, count($this->parameters));
-				foreach($this->parameters as $p){
-					CommonTypes::putString($out, $p);
-				}
-				break;
-		}
-
-		CommonTypes::putString($out, $this->xboxUserId);
-		CommonTypes::putString($out, $this->platformChatId);
-		CommonTypes::writeOptional($out, $this->filteredMessage, CommonTypes::putString(...));
+		case self::TYPE_TRANSLATION:
+		case self::TYPE_POPUP:
+		case self::TYPE_JUKEBOX_POPUP:
+			CommonTypes::putString($out, $this->message);
+			VarInt::writeUnsignedInt($out, count($this->parameters));
+			foreach($this->parameters as $p){
+				CommonTypes::putString($out, $p);
+			}
+			break;
 	}
 
-	public function handle(PacketHandlerInterface $handler) : bool{
-		return $handler->handleText($this);
-	}
+	CommonTypes::putString($out, $this->xboxUserId);
+	CommonTypes::putString($out, $this->platformChatId);
+	CommonTypes::writeOptional($out, $this->filteredMessage, CommonTypes::putString(...));
+}
+
+public function handle(PacketHandlerInterface $handler) : bool{
+	return $handler->handleText($this);
+}
 }

@@ -20,6 +20,7 @@ use pmmp\encoding\LE;
 use pmmp\encoding\VarInt;
 use pocketmine\network\mcpe\protocol\types\EntityDiagnosticTimingInfo;
 use pocketmine\network\mcpe\protocol\types\MemoryCategoryCounter;
+use pocketmine\network\mcpe\protocol\types\SystemCategory;
 use pocketmine\network\mcpe\protocol\types\SystemDiagnosticTimingInfo;
 use pocketmine\network\mcpe\protocol\types\WhiskerScopeDataSummary;
 use function count;
@@ -52,6 +53,11 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 */
 	private array $systemDiagnostics = [];
 	/**
+	 * @var SystemCategory[]
+	 * @phpstan-var list<SystemCategory>
+	 */
+	private array $systemCategory = [];
+	/**
 	 * @var WhiskerScopeDataSummary[]
 	 * @phpstan-var list<WhiskerScopeDataSummary>
 	 */
@@ -62,10 +68,12 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @param MemoryCategoryCounter[]      $memoryCategoryValues
 	 * @param EntityDiagnosticTimingInfo[] $entityDiagnostics
 	 * @param SystemDiagnosticTimingInfo[] $systemDiagnostics
+	 * @param SystemCategory[]             $systemCategory
 	 * @param WhiskerScopeDataSummary[]    $whiskerScopes
 	 * @phpstan-param list<MemoryCategoryCounter>      $memoryCategoryValues
 	 * @phpstan-param list<EntityDiagnosticTimingInfo> $entityDiagnostics
 	 * @phpstan-param list<SystemDiagnosticTimingInfo> $systemDiagnostics
+	 * @phpstan-param list<SystemCategory>             $systemCategory
 	 * @phpstan-param list<WhiskerScopeDataSummary>    $whiskerScopes
 	 */
 	public static function create(
@@ -81,6 +89,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 		array $memoryCategoryValues,
 		array $entityDiagnostics,
 		array $systemDiagnostics,
+		array $systemCategory,
 		array $whiskerScopes,
 	) : self{
 		$result = new self;
@@ -96,6 +105,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 		$result->memoryCategoryValues = $memoryCategoryValues;
 		$result->entityDiagnostics = $entityDiagnostics;
 		$result->systemDiagnostics = $systemDiagnostics;
+		$result->systemCategory = $systemCategory;
 		$result->whiskerScopes = $whiskerScopes;
 		return $result;
 	}
@@ -137,6 +147,12 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	public function getSystemDiagnostics() : array{ return $this->systemDiagnostics; }
 
 	/**
+	 * @return SystemCategory[]
+	 * @phpstan-return list<SystemCategory>
+	 */
+	public function getSystemCategory() : array{ return $this->systemCategory; }
+
+	/**
 	 * @return WhiskerScopeDataSummary[]
 	 * @phpstan-return list<WhiskerScopeDataSummary>
 	 */
@@ -168,6 +184,11 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 			$this->systemDiagnostics[] = SystemDiagnosticTimingInfo::read($in);
 		}
 
+		$this->systemCategory = [];
+		for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; $i++){
+			$this->systemCategory[] = SystemCategory::read($in);
+		}
+
 		$this->whiskerScopes = [];
 		for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; $i++){
 			$this->whiskerScopes[] = WhiskerScopeDataSummary::read($in);
@@ -197,6 +218,11 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 
 		VarInt::writeUnsignedInt($out, count($this->systemDiagnostics));
 		foreach($this->systemDiagnostics as $value){
+			$value->write($out);
+		}
+
+		VarInt::writeUnsignedInt($out, count($this->systemCategory));
+		foreach($this->systemCategory as $value){
 			$value->write($out);
 		}
 

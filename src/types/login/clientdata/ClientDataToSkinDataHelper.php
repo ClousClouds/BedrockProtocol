@@ -68,11 +68,11 @@ final class ClientDataToSkinDataHelper{
 			$clientData->ArmSize,
 			$clientData->SkinColor,
 			array_map(function(ClientDataPersonaSkinPiece $piece) : PersonaSkinPiece{
-				return new PersonaSkinPiece($piece->PieceId, $piece->PieceType, $piece->PackId, $piece->IsDefault, $piece->ProductId);
-			}, $clientData->PersonaPieces),
+					return new PersonaSkinPiece($piece->PieceId, $piece->PieceType, $piece->PackId, $piece->IsDefault, $piece->ProductId);
+				}, $clientData->PersonaPieces),
 			array_map(function(ClientDataPersonaPieceTintColor $tint) : PersonaPieceTintColor{
-				return new PersonaPieceTintColor($tint->PieceType, $tint->Colors);
-			}, $clientData->PieceTintColors),
+					return new PersonaPieceTintColor($tint->PieceType, $tint->Colors);
+				}, $clientData->PieceTintColors),
 			true,
 			$clientData->PremiumSkin,
 			$clientData->PersonaSkin,

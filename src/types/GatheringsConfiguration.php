@@ -19,7 +19,7 @@ use pmmp\encoding\ByteBufferWriter;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use Ramsey\Uuid\UuidInterface;
 
-final class GatheringJoinInfo{
+final class GatheringsConfiguration{
 
 	public function __construct(
 		private UuidInterface $experienceId,

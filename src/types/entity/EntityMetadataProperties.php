@@ -21,9 +21,9 @@ final class EntityMetadataProperties{
 	}
 
 	/*
-	 * Readers beware: this isn't a nice list. Some of the properties have different types for different entities, and
-	 * are used for entirely different things.
-	 */
+		* Readers beware: this isn't a nice list. Some of the properties have different types for different entities, and
+		* are used for entirely different things.
+		*/
 	public const FLAGS = 0;
 	public const HEALTH = 1; //int (minecart/boat)
 	public const VARIANT = 2; //int

@@ -111,13 +111,13 @@ final class CommonTypes{
 		$skinPlayFabId = self::getString($in);
 		$skinResourcePatch = self::getString($in);
 		$skinData = self::getSkinImage($in);
-		$animationCount = LE::readUnsignedInt($in);
+		$animationCount = VarInt::readUnsignedInt($in);
 		$animations = [];
 		for($i = 0; $i < $animationCount; ++$i){
 			$skinImage = self::getSkinImage($in);
-			$animationType = LE::readUnsignedInt($in);
+			$animationType = VarInt::readUnsignedInt($in);
 			$animationFrames = LE::readFloat($in);
-			$expressionType = LE::readUnsignedInt($in);
+			$expressionType = VarInt::readUnsignedInt($in);
 			$animations[] = new SkinAnimation($skinImage, $animationType, $animationFrames, $expressionType);
 		}
 		$capeData = self::getSkinImage($in);
@@ -126,26 +126,25 @@ final class CommonTypes{
 		$animationData = self::getString($in);
 		$capeId = self::getString($in);
 		$fullSkinId = self::getString($in);
-		$armSize = self::getString($in);
-		$skinColor = self::getString($in);
-		$personaPieceCount = LE::readUnsignedInt($in);
+		$armSize = Byte::readUnsigned($in);
+		$skinColor = LE::readUnsignedInt($in);
+		$personaPieceCount = VarInt::readUnsignedInt($in);
 		$personaPieces = [];
 		for($i = 0; $i < $personaPieceCount; ++$i){
 			$pieceId = self::getString($in);
-			$pieceType = self::getString($in);
-			$packId = self::getString($in);
+			$pieceType = LE::readUnsignedInt($in);
+			$packId = self::getUUID($in);
 			$isDefaultPiece = self::getBool($in);
 			$productId = self::getString($in);
 			$personaPieces[] = new PersonaSkinPiece($pieceId, $pieceType, $packId, $isDefaultPiece, $productId);
 		}
-		$pieceTintColorCount = LE::readUnsignedInt($in);
+		$pieceTintColorCount = VarInt::readUnsignedInt($in);
 		$pieceTintColors = [];
 		for($i = 0; $i < $pieceTintColorCount; ++$i){
 			$pieceType = self::getString($in);
-			$colorCount = LE::readUnsignedInt($in);
 			$colors = [];
-			for($j = 0; $j < $colorCount; ++$j){
-				$colors[] = self::getString($in);
+			for($j = 0; $j < 4; ++$j){
+				$colors[] = LE::readUnsignedInt($in);
 			}
 			$pieceTintColors[] = new PersonaPieceTintColor(
 				$pieceType,
@@ -158,6 +157,8 @@ final class CommonTypes{
 		$capeOnClassic = self::getBool($in);
 		$isPrimaryUser = self::getBool($in);
 		$override = self::getBool($in);
+		$trustedSkinFlag = self::getString($in);
+		$profileHash = self::getString($in);
 
 		return new SkinData(
 			$skinId,
@@ -181,6 +182,8 @@ final class CommonTypes{
 			$capeOnClassic,
 			$isPrimaryUser,
 			$override,
+			$trustedSkinFlag,
+			$profileHash,
 		);
 	}
 
@@ -189,12 +192,12 @@ final class CommonTypes{
 		self::putString($out, $skin->getPlayFabId());
 		self::putString($out, $skin->getResourcePatch());
 		self::putSkinImage($out, $skin->getSkinImage());
-		LE::writeUnsignedInt($out, count($skin->getAnimations()));
+		VarInt::writeUnsignedInt($out, count($skin->getAnimations()));
 		foreach($skin->getAnimations() as $animation){
 			self::putSkinImage($out, $animation->getImage());
-			LE::writeUnsignedInt($out, $animation->getType());
+			VarInt::writeUnsignedInt($out, $animation->getType());
 			LE::writeFloat($out, $animation->getFrames());
-			LE::writeUnsignedInt($out, $animation->getExpressionType());
+			VarInt::writeUnsignedInt($out, $animation->getExpressionType());
 		}
 		self::putSkinImage($out, $skin->getCapeImage());
 		self::putString($out, $skin->getGeometryData());
@@ -202,22 +205,21 @@ final class CommonTypes{
 		self::putString($out, $skin->getAnimationData());
 		self::putString($out, $skin->getCapeId());
 		self::putString($out, $skin->getFullSkinId());
-		self::putString($out, $skin->getArmSize());
-		self::putString($out, $skin->getSkinColor());
-		LE::writeUnsignedInt($out, count($skin->getPersonaPieces()));
+		Byte::writeUnsigned($out, $skin->getArmSize());
+		LE::writeUnsignedInt($out, $skin->getSkinColor());
+		VarInt::writeUnsignedInt($out, count($skin->getPersonaPieces()));
 		foreach($skin->getPersonaPieces() as $piece){
 			self::putString($out, $piece->getPieceId());
-			self::putString($out, $piece->getPieceType());
-			self::putString($out, $piece->getPackId());
+			LE::writeUnsignedInt($out, $piece->getPieceType());
+			self::putUUID($out, $piece->getPackId());
 			self::putBool($out, $piece->isDefaultPiece());
 			self::putString($out, $piece->getProductId());
 		}
-		LE::writeUnsignedInt($out, count($skin->getPieceTintColors()));
+		VarInt::writeUnsignedInt($out, count($skin->getPieceTintColors()));
 		foreach($skin->getPieceTintColors() as $tint){
 			self::putString($out, $tint->getPieceType());
-			LE::writeUnsignedInt($out, count($tint->getColors()));
 			foreach($tint->getColors() as $color){
-				self::putString($out, $color);
+				LE::writeUnsignedInt($out, $color);
 			}
 		}
 		self::putBool($out, $skin->isPremium());
@@ -225,6 +227,8 @@ final class CommonTypes{
 		self::putBool($out, $skin->isPersonaCapeOnClassic());
 		self::putBool($out, $skin->isPrimaryUser());
 		self::putBool($out, $skin->isOverride());
+		self::putString($out, $skin->getTrustedSkinFlag());
+		self::putString($out, $skin->getProfileHash());
 	}
 
 	/** @throws DataDecodeException */
@@ -407,16 +411,18 @@ final class CommonTypes{
 		$data = [];
 		for($i = 0; $i < $count; ++$i){
 			$key = VarInt::readUnsignedInt($in);
-			$type = VarInt::readUnsignedInt($in);
 
-			$data[$key] = self::readMetadataProperty($in, $type);
+			$data[$key] = self::readMetadataProperty($in);
 		}
 
 		return $data;
 	}
 
 	/** @throws DataDecodeException */
-	private static function readMetadataProperty(ByteBufferReader $in, int $type) : MetadataProperty{
+	private static function readMetadataProperty(ByteBufferReader $in) : MetadataProperty{
+		$type = VarInt::readUnsignedInt($in);
+		Byte::readUnsigned($in);
+
 		return match($type){
 			ByteMetadataProperty::ID => ByteMetadataProperty::read($in),
 			ShortMetadataProperty::ID => ShortMetadataProperty::read($in),
@@ -440,11 +446,15 @@ final class CommonTypes{
 	 */
 	public static function putEntityMetadata(ByteBufferWriter $out, array $metadata) : void{
 		VarInt::writeUnsignedInt($out, count($metadata));
-		foreach($metadata as $key => $d){
+		foreach($metadata as $key => $property){
 			VarInt::writeUnsignedInt($out, $key);
-			VarInt::writeUnsignedInt($out, $d->getTypeId());
-			$d->write($out);
+			self::writeMetadataProperty($out, $property);
 		}
+	}
+
+	private static function writeMetadataProperty(ByteBufferWriter $out, MetadataProperty $property) : void{
+		VarInt::writeUnsignedInt($out, $property->getTypeId());
+		$property->write($out);
 	}
 
 	/** @throws DataDecodeException */
@@ -554,10 +564,10 @@ final class CommonTypes{
 	}
 
 	/** @throws DataDecodeException */
-	private static function readGameRule(ByteBufferReader $in, int $type, bool $isPlayerModifiable, bool $isStartGame) : GameRule{
+	private static function readGameRule(ByteBufferReader $in, int $type, bool $isPlayerModifiable) : GameRule{
 		return match($type){
 			BoolGameRule::ID => BoolGameRule::decode($in, $isPlayerModifiable),
-			IntGameRule::ID => IntGameRule::decode($in, $isPlayerModifiable, $isStartGame),
+			IntGameRule::ID => IntGameRule::decode($in, $isPlayerModifiable),
 			FloatGameRule::ID => FloatGameRule::decode($in, $isPlayerModifiable),
 			default => throw new PacketDecodeException("Unknown gamerule type $type"),
 		};
@@ -572,14 +582,14 @@ final class CommonTypes{
 	 * @throws PacketDecodeException
 	 * @throws DataDecodeException
 	 */
-	public static function getGameRules(ByteBufferReader $in, bool $isStartGame) : array{
+	public static function getGameRules(ByteBufferReader $in) : array{
 		$count = VarInt::readUnsignedInt($in);
 		$rules = [];
 		for($i = 0; $i < $count; ++$i){
 			$name = self::getString($in);
 			$isPlayerModifiable = self::getBool($in);
 			$type = VarInt::readUnsignedInt($in);
-			$rules[$name] = self::readGameRule($in, $type, $isPlayerModifiable, $isStartGame);
+			$rules[$name] = self::readGameRule($in, $type, $isPlayerModifiable);
 		}
 
 		return $rules;
@@ -591,13 +601,13 @@ final class CommonTypes{
 	 * @param GameRule[] $rules
 	 * @phpstan-param array<string, GameRule> $rules
 	 */
-	public static function putGameRules(ByteBufferWriter $out, array $rules, bool $isStartGame) : void{
+	public static function putGameRules(ByteBufferWriter $out, array $rules) : void{
 		VarInt::writeUnsignedInt($out, count($rules));
 		foreach($rules as $name => $rule){
 			self::putString($out, $name);
 			self::putBool($out, $rule->isPlayerModifiable());
 			VarInt::writeUnsignedInt($out, $rule->getTypeId());
-			$rule->encode($out, $isStartGame);
+			$rule->encode($out);
 		}
 	}
 

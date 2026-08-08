@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types\login\clientdata;
 
+use Ramsey\Uuid\UuidInterface;
+
 /**
  * Model class for LoginPacket JSON data for JsonMapper
  */
@@ -22,10 +24,10 @@ final class ClientDataPersonaSkinPiece{
 	public string $PieceId;
 
 	/** @required */
-	public string $PieceType;
+	public int $PieceType;
 
 	/** @required */
-	public string $PackId;
+	public UuidInterface $PackId;
 
 	/** @required */
 	public bool $IsDefault;

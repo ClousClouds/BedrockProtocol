@@ -22,7 +22,7 @@ final class ClientDataPersonaPieceTintColor{
 	public string $PieceType;
 
 	/**
-	 * @var string[]
+	 * @var int[]
 	 * @required
 	 */
 	public array $Colors;

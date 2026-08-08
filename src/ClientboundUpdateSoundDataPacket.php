@@ -16,37 +16,41 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
-use pmmp\encoding\LE;
-use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
+use pocketmine\network\mcpe\protocol\types\sound\ServerSoundHandle;
+use pocketmine\network\mcpe\protocol\types\sound\SoundControl;
 
-class ClientboundUpdateSoundDataPacket extends DataPacket implements ClientboundPacket{
+final class ClientboundUpdateSoundDataPacket extends DataPacket implements ClientboundPacket{
 	public const NETWORK_ID = ProtocolInfo::CLIENTBOUND_UPDATE_SOUND_DATA_PACKET;
 
-	private int $serverSoundHandle;
-	private string $soundEvent;
+	private ServerSoundHandle $serverSoundHandle;
+	private SoundControl $soundControl;
 
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $serverSoundHandle, string $soundEvent) : self{
+	public static function create(ServerSoundHandle $serverSoundHandle, SoundControl $soundControl) : self{
 		$result = new self;
 		$result->serverSoundHandle = $serverSoundHandle;
-		$result->soundEvent = $soundEvent;
+		$result->soundControl = $soundControl;
 		return $result;
 	}
 
-	public function getServerSoundHandle() : int{ return $this->serverSoundHandle; }
+	public function getServerSoundHandle() : ServerSoundHandle{
+		return $this->serverSoundHandle;
+	}
 
-	public function getSoundEvent() : string{ return $this->soundEvent; }
+	public function getSoundControl() : SoundControl{
+		return $this->soundControl;
+	}
 
 	protected function decodePayload(ByteBufferReader $in) : void{
-		$this->serverSoundHandle = LE::readUnsignedLong($in);
-		$this->soundEvent = CommonTypes::getString($in);
+		$this->serverSoundHandle = ServerSoundHandle::read($in);
+		$this->soundControl = SoundControl::read($in);
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
-		LE::writeUnsignedLong($out, $this->serverSoundHandle);
-		CommonTypes::putString($out, $this->soundEvent);
+		$this->serverSoundHandle->write($out);
+		$this->soundControl->write($out);
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{
