@@ -25,11 +25,9 @@ final class ResourcePackStackFinishedResourcePackClientResponse extends Resource
 	}
 
 	public static function read(ByteBufferReader $in) : static{
-		Byte::readUnsigned($in);
 		return new self();
 	}
 
 	public function write(ByteBufferWriter $out) : void{
-		Byte::writeUnsigned($out, $this->getType()->value);
 	}
 }

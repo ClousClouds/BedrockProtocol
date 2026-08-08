@@ -25,11 +25,9 @@ final class CancelResourcePackClientResponse extends ResourcePackClientResponse{
 	}
 
 	public static function read(ByteBufferReader $in) : static{
-		Byte::readUnsigned($in); // ResponseType
 		return new self();
 	}
 
 	public function write(ByteBufferWriter $out) : void{
-		Byte::writeUnsigned($out, $this->getType()->value);
 	}
 }
