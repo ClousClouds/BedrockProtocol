@@ -57,9 +57,9 @@ final class ItemInteractionData{
 			}
 		}
 		$transactionData = new UseItemTransactionData();
-		if(CommonTypes::getBool($in) && CommonTypes::getBool($in){
+		if(CommonTypes::getBool($in) && CommonTypes::getBool($in)){
 			$transactionData->decodeAuthInput($in);
-    }
+	}
 
 		return new ItemInteractionData($requestId, $requestChangedSlots, $transactionData);
 	}
