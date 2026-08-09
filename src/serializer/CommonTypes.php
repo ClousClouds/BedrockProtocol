@@ -421,7 +421,6 @@ final class CommonTypes{
 	/** @throws DataDecodeException */
 	private static function readMetadataProperty(ByteBufferReader $in) : MetadataProperty{
 		$type = VarInt::readUnsignedInt($in);
-		Byte::readUnsigned($in);
 
 		return match($type){
 			ByteMetadataProperty::ID => ByteMetadataProperty::read($in),
@@ -446,15 +445,11 @@ final class CommonTypes{
 	 */
 	public static function putEntityMetadata(ByteBufferWriter $out, array $metadata) : void{
 		VarInt::writeUnsignedInt($out, count($metadata));
-		foreach($metadata as $key => $property){
+		foreach($metadata as $key => $d){
 			VarInt::writeUnsignedInt($out, $key);
-			self::writeMetadataProperty($out, $property);
+			VarInt::writeUnsignedInt($out, $d->getTypeId());
+			$d->write($out);
 		}
-	}
-
-	private static function writeMetadataProperty(ByteBufferWriter $out, MetadataProperty $property) : void{
-		VarInt::writeUnsignedInt($out, $property->getTypeId());
-		$property->write($out);
 	}
 
 	/** @throws DataDecodeException */
