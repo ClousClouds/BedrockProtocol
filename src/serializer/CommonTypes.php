@@ -448,6 +448,7 @@ final class CommonTypes{
 		foreach($metadata as $key => $d){
 			VarInt::writeUnsignedInt($out, $key);
 			VarInt::writeUnsignedInt($out, $d->getTypeId());
+			VarInt::writeUnsignedInt($out, $d->getTypeId());
 			$d->write($out);
 		}
 	}
