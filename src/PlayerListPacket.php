@@ -17,7 +17,6 @@ namespace pocketmine\network\mcpe\protocol;
 use pmmp\encoding\Byte;
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
-use pmmp\encoding\DataDecodeException;
 use pmmp\encoding\LE;
 use pmmp\encoding\VarInt;
 use pocketmine\color\Color;
@@ -31,6 +30,10 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	public const TYPE_REMOVE = 0;
 	public const TYPE_ADD = 1;
 
+	private const LEGACY_TYPE_ADD = 0;
+	private const LEGACY_TYPE_REMOVE = 1;
+
+	public int $type;
 	/** @var PlayerListEntry[] */
 	public array $entries = [];
 
@@ -38,8 +41,9 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	 * @generate-create-func
 	 * @param PlayerListEntry[] $entries
 	 */
-	private static function create(array $entries) : self{
+	private static function create(int $type, array $entries) : self{
 		$result = new self;
+		$result->type = $type;
 		$result->entries = $entries;
 		return $result;
 	}
@@ -48,45 +52,43 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	 * @param PlayerListEntry[] $entries
 	 */
 	public static function add(array $entries) : self{
-		foreach($entries as $entry){
-			$entry->type = self::TYPE_ADD;
-		}
-		return self::create($entries);
+		return self::create(self::TYPE_ADD, $entries);
 	}
 
 	/**
 	 * @param PlayerListEntry[] $entries
 	 */
 	public static function remove(array $entries) : self{
-		foreach($entries as $entry){
-			$entry->type = self::TYPE_REMOVE;
-		}
-		return self::create($entries);
+		return self::create(self::TYPE_REMOVE, $entries);
 	}
 
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$count = VarInt::readUnsignedInt($in);
 		for($i = 0; $i < $count; ++$i){
+			$this->type = VarInt::readUnsignedInt($in);
+			Byte::readUnsigned($in);
 			$entry = new PlayerListEntry();
-			$entry->type = VarInt::readUnsignedInt($in);
-			Byte::readUnsigned($in); // legacyid
 
-			if($entry->type === self::TYPE_ADD){
+			if($this->type === self::TYPE_ADD){
 				$entry->uuid = CommonTypes::getUUID($in);
 				$entry->actorUniqueId = CommonTypes::getActorUniqueId($in);
 				$entry->username = CommonTypes::getString($in);
 				$entry->xboxUserId = CommonTypes::getString($in);
 				$entry->platformChatId = CommonTypes::getString($in);
+				if($in->getUnreadLength() === 0){
+					$this->entries[$i] = $entry;
+					continue;
+				}
 				$entry->buildPlatform = LE::readSignedInt($in);
 				$entry->skinData = CommonTypes::getSkin($in);
 				$entry->isTeacher = CommonTypes::getBool($in);
 				$entry->isHost = CommonTypes::getBool($in);
 				$entry->isSubClient = CommonTypes::getBool($in);
 				$entry->color = Color::fromARGB(LE::readUnsignedInt($in));
-			}elseif($entry->type === self::TYPE_REMOVE){
+			}elseif($this->type === self::TYPE_REMOVE){
 				$entry->uuid = CommonTypes::getUUID($in);
 			}else{
-				throw new DataDecodeException("Unknown player list entry type " . $entry->type);
+				throw new PacketDecodeException("Unknown player list entry type " . $this->type);
 			}
 
 			$this->entries[$i] = $entry;
@@ -96,24 +98,23 @@ class PlayerListPacket extends DataPacket implements ClientboundPacket{
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		VarInt::writeUnsignedInt($out, count($this->entries));
 		foreach($this->entries as $entry){
-			VarInt::writeUnsignedInt($out, $entry->type);
-			Byte::writeUnsigned($out, $entry->type === self::TYPE_ADD ? 0 : 1);
-			if($entry->type === self::TYPE_ADD){
+			VarInt::writeUnsignedInt($out, $this->type);
+			Byte::writeUnsigned($out, $this->type === self::TYPE_ADD ? self::LEGACY_TYPE_ADD : self::LEGACY_TYPE_REMOVE);
+			if($this->type === self::TYPE_ADD){
+				$skinData = $entry->skinData ?? throw new \InvalidArgumentException("Player list addition entries must have skin data");
 				CommonTypes::putUUID($out, $entry->uuid);
 				CommonTypes::putActorUniqueId($out, $entry->actorUniqueId);
 				CommonTypes::putString($out, $entry->username);
 				CommonTypes::putString($out, $entry->xboxUserId);
 				CommonTypes::putString($out, $entry->platformChatId);
 				LE::writeSignedInt($out, $entry->buildPlatform);
-				CommonTypes::putSkin($out, $entry->skinData);
+				CommonTypes::putSkin($out, $skinData);
 				CommonTypes::putBool($out, $entry->isTeacher);
 				CommonTypes::putBool($out, $entry->isHost);
 				CommonTypes::putBool($out, $entry->isSubClient);
 				LE::writeUnsignedInt($out, ($entry->color ?? new Color(255, 255, 255))->toARGB());
-			}elseif($entry->type === self::TYPE_REMOVE){
-				CommonTypes::putUUID($out, $entry->uuid);
 			}else{
-				throw new \InvalidArgumentException("Unknown player list entry type " . $entry->type);
+				CommonTypes::putUUID($out, $entry->uuid);
 			}
 		}
 	}

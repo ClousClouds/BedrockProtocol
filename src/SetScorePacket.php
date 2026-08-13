@@ -25,6 +25,13 @@ use function count;
 class SetScorePacket extends DataPacket implements ClientboundPacket{
 	public const NETWORK_ID = ProtocolInfo::SET_SCORE_PACKET;
 
+	private const ACTION_IDS = [
+		ScorePacketEntry::TYPE_REMOVE => "remove",
+		ScorePacketEntry::TYPE_PLAYER => "changeplayer",
+		ScorePacketEntry::TYPE_ENTITY => "changeentity",
+		ScorePacketEntry::TYPE_FAKE_PLAYER => "changefakeplayer"
+	];
+
 	/** @var ScorePacketEntry[] */
 	public array $entries = [];
 
@@ -39,24 +46,26 @@ class SetScorePacket extends DataPacket implements ClientboundPacket{
 	}
 
 	protected function decodePayload(ByteBufferReader $in) : void{
-		$count = VarInt::readUnsignedInt($in);
-		for($i = 0, $i2 = $count; $i < $i2; ++$i){
+		for($i = 0, $i2 = VarInt::readUnsignedInt($in); $i < $i2; ++$i){
 			$entry = new ScorePacketEntry();
 			$entry->type = VarInt::readUnsignedInt($in);
-			CommonTypes::getString($in);
-			$entry->scoreboardId = VarInt::readSignedLong($in);
+			CommonTypes::getString($in); //action id, redundant with the type
 			switch($entry->type){
 				case ScorePacketEntry::TYPE_REMOVE:
+					$entry->scoreboardId = VarInt::readSignedLong($in);
 					$entry->objectiveName = CommonTypes::readOptional($in, CommonTypes::getString(...));
+					break;
 				case ScorePacketEntry::TYPE_PLAYER:
 				case ScorePacketEntry::TYPE_ENTITY:
+					$entry->scoreboardId = VarInt::readSignedLong($in);
 					$entry->objectiveName = CommonTypes::getString($in);
-					$entry->score = LE::readUnsignedInt($in);
+					$entry->score = LE::readSignedInt($in);
 					$entry->actorUniqueId = CommonTypes::getActorUniqueId($in);
 					break;
 				case ScorePacketEntry::TYPE_FAKE_PLAYER:
+					$entry->scoreboardId = VarInt::readSignedLong($in);
 					$entry->objectiveName = CommonTypes::getString($in);
-					$entry->score = LE::readUnsignedInt($in);
+					$entry->score = LE::readSignedInt($in);
 					$entry->customName = CommonTypes::getString($in);
 					break;
 				default:
@@ -69,31 +78,27 @@ class SetScorePacket extends DataPacket implements ClientboundPacket{
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		VarInt::writeUnsignedInt($out, count($this->entries));
 		foreach($this->entries as $entry){
+			$actionId = self::ACTION_IDS[$entry->type] ?? throw new \InvalidArgumentException("Unknown entry type $entry->type");
 			VarInt::writeUnsignedInt($out, $entry->type);
-			CommonTypes::putString($out, match ($entry->type) {
-					ScorePacketEntry::TYPE_REMOVE => "remove",
-					ScorePacketEntry::TYPE_PLAYER => "changeplayer",
-					ScorePacketEntry::TYPE_ENTITY => "changeentity",
-					ScorePacketEntry::TYPE_FAKE_PLAYER => "changefakeplayer",
-					default => throw new \InvalidArgumentException("Unknown type $entry->type")
-			});
-			VarInt::writeSignedLong($out, $entry->scoreboardId);
+			CommonTypes::putString($out, $actionId);
 			switch($entry->type){
 				case ScorePacketEntry::TYPE_REMOVE:
-					CommonTypes::writeOptional($out, $entry->objectiveName, static fn(ByteBufferWriter $out, string $value) => CommonTypes::putString($out, $value));
+					VarInt::writeSignedLong($out, $entry->scoreboardId);
+					CommonTypes::writeOptional($out, $entry->objectiveName, CommonTypes::putString(...));
+					break;
 				case ScorePacketEntry::TYPE_PLAYER:
 				case ScorePacketEntry::TYPE_ENTITY:
-					CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("Objective name must be set for player/entity entry"));
-					LE::writeUnsignedInt($out, $entry->score);
+					VarInt::writeSignedLong($out, $entry->scoreboardId);
+					CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("objectiveName must be set for this entry type"));
+					LE::writeSignedInt($out, $entry->score);
 					CommonTypes::putActorUniqueId($out, $entry->actorUniqueId);
 					break;
 				case ScorePacketEntry::TYPE_FAKE_PLAYER:
-					CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("Objective name must be set for player/entity entry"));
-					LE::writeUnsignedInt($out, $entry->score);
+					VarInt::writeSignedLong($out, $entry->scoreboardId);
+					CommonTypes::putString($out, $entry->objectiveName ?? throw new \InvalidArgumentException("objectiveName must be set for this entry type"));
+					LE::writeSignedInt($out, $entry->score);
 					CommonTypes::putString($out, $entry->customName);
 					break;
-				default:
-					throw new \InvalidArgumentException("Unknown entry type $entry->type");
 			}
 		}
 	}

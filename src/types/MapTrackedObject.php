@@ -20,37 +20,25 @@ use pmmp\encoding\LE;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 
 class MapTrackedObject{
-	public const TYPE_BLOCK = 0;
-	public const TYPE_ENTITY = 1;
+	public const TYPE_ENTITY = 0;
+	public const TYPE_BLOCK_ENTITY = 1;
 	public const TYPE_OTHER = 2;
 
 	public int $type;
-	public ?BlockPosition $blockPosition = null;
 	public ?int $actorUniqueId = null;
+	public ?BlockPosition $blockPosition = null;
 
 	public static function read(ByteBufferReader $in) : self{
 		$result = new self;
 		$result->type = LE::readUnsignedInt($in);
-		if($result->type === self::TYPE_BLOCK){
-			$result->blockPosition = CommonTypes::getBlockPosition($in);
-		}elseif($result->type === self::TYPE_ENTITY){
-			$result->actorUniqueId = CommonTypes::getActorUniqueId($in);
-		}
+		$result->actorUniqueId = CommonTypes::readOptional($in, CommonTypes::getActorUniqueId(...));
+		$result->blockPosition = CommonTypes::readOptional($in, CommonTypes::getBlockPosition(...));
 		return $result;
 	}
 
 	public function write(ByteBufferWriter $out) : void{
 		LE::writeUnsignedInt($out, $this->type);
-		if($this->type === self::TYPE_BLOCK){
-			if($this->blockPosition === null){
-				throw new \InvalidArgumentException("Block position must be set for block map tracked object");
-			}
-			CommonTypes::putBlockPosition($out, $this->blockPosition);
-		}elseif($this->type === self::TYPE_ENTITY){
-			if($this->actorUniqueId === null){
-				throw new \InvalidArgumentException("Actor unique ID must be set for entity map tracked object");
-			}
-			CommonTypes::putActorUniqueId($out, $this->actorUniqueId);
-		}
+		CommonTypes::writeOptional($out, $this->actorUniqueId, CommonTypes::putActorUniqueId(...));
+		CommonTypes::writeOptional($out, $this->blockPosition, CommonTypes::putBlockPosition(...));
 	}
 }

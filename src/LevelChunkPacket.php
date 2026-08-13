@@ -33,7 +33,7 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 	/** @phpstan-var DimensionIds::* */
 	private int $dimensionId;
 	private int $subChunkCount;
-	private ?int $clientRequestSubChunkLimit = null;
+	private ?int $clientRequestSubChunkLimit;
 	private bool $cacheEnabled;
 	/** @var int[] */
 	private array $usedBlobHashes = [];
@@ -95,10 +95,9 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 		$this->chunkPosition = ChunkPosition::read($in);
 		$this->dimensionId = VarInt::readSignedInt($in);
 		$this->subChunkCount = VarInt::readUnsignedInt($in);
-
 		$this->clientRequestSubChunkLimit = CommonTypes::getBool($in) ? VarInt::readSignedInt($in) : null;
-
 		$this->cacheEnabled = CommonTypes::getBool($in);
+
 		$this->usedBlobHashes = [];
 		$count = VarInt::readUnsignedInt($in);
 		if($count > self::MAX_BLOB_HASHES){
@@ -107,7 +106,6 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 		for($i = 0; $i < $count; ++$i){
 			$this->usedBlobHashes[] = LE::readUnsignedLong($in);
 		}
-
 		$this->extraPayload = CommonTypes::getString($in);
 	}
 
@@ -115,7 +113,6 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 		$this->chunkPosition->write($out);
 		VarInt::writeSignedInt($out, $this->dimensionId);
 		VarInt::writeUnsignedInt($out, $this->subChunkCount);
-
 		CommonTypes::putBool($out, $this->clientRequestSubChunkLimit !== null);
 		if($this->clientRequestSubChunkLimit !== null){
 			VarInt::writeSignedInt($out, $this->clientRequestSubChunkLimit);
@@ -126,7 +123,6 @@ class LevelChunkPacket extends DataPacket implements ClientboundPacket{
 		foreach($this->usedBlobHashes as $hash){
 			LE::writeUnsignedLong($out, $hash);
 		}
-
 		CommonTypes::putString($out, $this->extraPayload);
 	}
 

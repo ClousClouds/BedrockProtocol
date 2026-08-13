@@ -16,6 +16,7 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\DataDecodeException;
 use pmmp\encoding\LE;
 use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 
@@ -34,28 +35,89 @@ class MoveActorDeltaPacket extends DataPacket implements ClientboundPacket{
 	public bool $forceMoveLocalEntity = false;
 	public bool $forceCompletion = false;
 
+	/**
+	 * @generate-create-func
+	 */
+	public static function create(
+		int $actorRuntimeId,
+		?float $xPos,
+		?float $yPos,
+		?float $zPos,
+		?float $pitch,
+		?float $yaw,
+		?float $headYaw,
+		bool $onGround,
+		bool $teleport,
+		bool $forceMoveLocalEntity,
+		bool $forceCompletion,
+	) : self{
+		$result = new self;
+		$result->actorRuntimeId = $actorRuntimeId;
+		$result->xPos = $xPos;
+		$result->yPos = $yPos;
+		$result->zPos = $zPos;
+		$result->pitch = $pitch;
+		$result->yaw = $yaw;
+		$result->headYaw = $headYaw;
+		$result->onGround = $onGround;
+		$result->teleport = $teleport;
+		$result->forceMoveLocalEntity = $forceMoveLocalEntity;
+		$result->forceCompletion = $forceCompletion;
+		return $result;
+	}
+
+	/** @throws DataDecodeException */
+	private static function maybeReadCoord(ByteBufferReader $in) : ?float{
+		if(CommonTypes::getBool($in)){
+			return LE::readFloat($in);
+		}
+		return null;
+	}
+
+	/** @throws DataDecodeException */
+	private static function maybeReadRotation(ByteBufferReader $in) : ?float{
+		if(CommonTypes::getBool($in)){
+			return CommonTypes::getRotationByte($in);
+		}
+		return null;
+	}
+
 	protected function decodePayload(ByteBufferReader $in) : void{
 		$this->actorRuntimeId = CommonTypes::getActorRuntimeId($in);
-		$this->xPos = CommonTypes::readOptional($in, LE::readFloat(...));
-		$this->yPos = CommonTypes::readOptional($in, LE::readFloat(...));
-		$this->zPos = CommonTypes::readOptional($in, LE::readFloat(...));
-		$this->pitch = CommonTypes::readOptional($in, CommonTypes::getRotationByte(...));
-		$this->yaw = CommonTypes::readOptional($in, CommonTypes::getRotationByte(...));
-		$this->headYaw = CommonTypes::readOptional($in, CommonTypes::getRotationByte(...));
+		$this->xPos = self::maybeReadCoord($in);
+		$this->yPos = self::maybeReadCoord($in);
+		$this->zPos = self::maybeReadCoord($in);
+		$this->pitch = self::maybeReadRotation($in);
+		$this->yaw = self::maybeReadRotation($in);
+		$this->headYaw = self::maybeReadRotation($in);
 		$this->onGround = CommonTypes::getBool($in);
 		$this->teleport = CommonTypes::getBool($in);
 		$this->forceMoveLocalEntity = CommonTypes::getBool($in);
 		$this->forceCompletion = CommonTypes::getBool($in);
 	}
 
+	private static function maybeWriteCoord(ByteBufferWriter $out, ?float $val) : void{
+		CommonTypes::putBool($out, $val !== null);
+		if($val !== null){
+			LE::writeFloat($out, $val);
+		}
+	}
+
+	private static function maybeWriteRotation(ByteBufferWriter $out, ?float $val) : void{
+		CommonTypes::putBool($out, $val !== null);
+		if($val !== null){
+			CommonTypes::putRotationByte($out, $val);
+		}
+	}
+
 	protected function encodePayload(ByteBufferWriter $out) : void{
 		CommonTypes::putActorRuntimeId($out, $this->actorRuntimeId);
-		CommonTypes::writeOptional($out, $this->xPos, LE::writeFloat(...));
-		CommonTypes::writeOptional($out, $this->yPos, LE::writeFloat(...));
-		CommonTypes::writeOptional($out, $this->zPos, LE::writeFloat(...));
-		CommonTypes::writeOptional($out, $this->pitch, CommonTypes::putRotationByte(...));
-		CommonTypes::writeOptional($out, $this->yaw, CommonTypes::putRotationByte(...));
-		CommonTypes::writeOptional($out, $this->headYaw, CommonTypes::putRotationByte(...));
+		self::maybeWriteCoord($out, $this->xPos);
+		self::maybeWriteCoord($out, $this->yPos);
+		self::maybeWriteCoord($out, $this->zPos);
+		self::maybeWriteRotation($out, $this->pitch);
+		self::maybeWriteRotation($out, $this->yaw);
+		self::maybeWriteRotation($out, $this->headYaw);
 		CommonTypes::putBool($out, $this->onGround);
 		CommonTypes::putBool($out, $this->teleport);
 		CommonTypes::putBool($out, $this->forceMoveLocalEntity);

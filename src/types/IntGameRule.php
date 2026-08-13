@@ -34,11 +34,11 @@ final class IntGameRule extends GameRule{
 		return $this->value;
 	}
 
-	public function encode(ByteBufferWriter $out) : void{
+	public function encode(ByteBufferWriter $out, bool $isStartGame) : void{
 		LE::writeUnsignedInt($out, $this->value);
 	}
 
-	public static function decode(ByteBufferReader $in, bool $isPlayerModifiable) : self{
+	public static function decode(ByteBufferReader $in, bool $isPlayerModifiable, bool $isStartGame) : self{
 		return new self(LE::readUnsignedInt($in), $isPlayerModifiable);
 	}
 }

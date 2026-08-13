@@ -21,19 +21,19 @@ use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 final class ServerJoinInformation{
 
 	public function __construct(
-		private ?GatheringsConfiguration $gatheringJoinInfo,
+		private ?GatheringJoinInfo $gatheringJoinInfo,
 		private ?StoreEntryPointInfo $storeEntryPointInfo,
 		private ?PresenceInfo $presenceInfo,
 	){}
 
-	public function getGatheringJoinInfo() : ?GatheringsConfiguration{ return $this->gatheringJoinInfo; }
+	public function getGatheringJoinInfo() : ?GatheringJoinInfo{ return $this->gatheringJoinInfo; }
 
 	public function getStoreEntryPointInfo() : ?StoreEntryPointInfo{ return $this->storeEntryPointInfo; }
 
 	public function getPresenceInfo() : ?PresenceInfo{ return $this->presenceInfo; }
 
 	public static function read(ByteBufferReader $in) : self{
-		$gatheringJoinInfo = CommonTypes::readOptional($in, GatheringsConfiguration::read(...));
+		$gatheringJoinInfo = CommonTypes::readOptional($in, GatheringJoinInfo::read(...));
 		$storeEntryPointInfo = CommonTypes::readOptional($in, StoreEntryPointInfo::read(...));
 		$presenceInfo = CommonTypes::readOptional($in, PresenceInfo::read(...));
 
@@ -45,7 +45,7 @@ final class ServerJoinInformation{
 	}
 
 	public function write(ByteBufferWriter $out) : void{
-		CommonTypes::writeOptional($out, $this->gatheringJoinInfo, fn(ByteBufferWriter $out, GatheringsConfiguration $info) => $info->write($out));
+		CommonTypes::writeOptional($out, $this->gatheringJoinInfo, fn(ByteBufferWriter $out, GatheringJoinInfo $info) => $info->write($out));
 		CommonTypes::writeOptional($out, $this->storeEntryPointInfo, fn(ByteBufferWriter $out, StoreEntryPointInfo $info) => $info->write($out));
 		CommonTypes::writeOptional($out, $this->presenceInfo, fn(ByteBufferWriter $out, PresenceInfo $info) => $info->write($out));
 	}

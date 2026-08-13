@@ -21,12 +21,12 @@ class ScorePacketEntry{
 	public const TYPE_FAKE_PLAYER = 3;
 
 	public int $scoreboardId;
-	/** @var string|null (if type remove) */
+	/** @var string|null (optional if type remove) */
 	public ?string $objectiveName = null;
-	public int $score;
+	public int $score = 0;
 	public int $type;
 	/** @var int|null (if type entity or player) */
-	public ?int $actorUniqueId = null;
+	public ?int $actorUniqueId;
 	/** @var string|null (if type fake player) */
-	public ?string $customName = null;
+	public ?string $customName;
 }

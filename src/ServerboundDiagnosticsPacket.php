@@ -56,7 +56,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @var SystemCategory[]
 	 * @phpstan-var list<SystemCategory>
 	 */
-	private array $systemCategory = [];
+	private array $systemCategories = [];
 	/**
 	 * @var WhiskerScopeDataSummary[]
 	 * @phpstan-var list<WhiskerScopeDataSummary>
@@ -68,12 +68,12 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @param MemoryCategoryCounter[]      $memoryCategoryValues
 	 * @param EntityDiagnosticTimingInfo[] $entityDiagnostics
 	 * @param SystemDiagnosticTimingInfo[] $systemDiagnostics
-	 * @param SystemCategory[]             $systemCategory
+	 * @param SystemCategory[]             $systemCategories
 	 * @param WhiskerScopeDataSummary[]    $whiskerScopes
 	 * @phpstan-param list<MemoryCategoryCounter>      $memoryCategoryValues
 	 * @phpstan-param list<EntityDiagnosticTimingInfo> $entityDiagnostics
 	 * @phpstan-param list<SystemDiagnosticTimingInfo> $systemDiagnostics
-	 * @phpstan-param list<SystemCategory>             $systemCategory
+	 * @phpstan-param list<SystemCategory>             $systemCategories
 	 * @phpstan-param list<WhiskerScopeDataSummary>    $whiskerScopes
 	 */
 	public static function create(
@@ -89,7 +89,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 		array $memoryCategoryValues,
 		array $entityDiagnostics,
 		array $systemDiagnostics,
-		array $systemCategory,
+		array $systemCategories,
 		array $whiskerScopes,
 	) : self{
 		$result = new self;
@@ -105,7 +105,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 		$result->memoryCategoryValues = $memoryCategoryValues;
 		$result->entityDiagnostics = $entityDiagnostics;
 		$result->systemDiagnostics = $systemDiagnostics;
-		$result->systemCategory = $systemCategory;
+		$result->systemCategories = $systemCategories;
 		$result->whiskerScopes = $whiskerScopes;
 		return $result;
 	}
@@ -150,7 +150,7 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 	 * @return SystemCategory[]
 	 * @phpstan-return list<SystemCategory>
 	 */
-	public function getSystemCategory() : array{ return $this->systemCategory; }
+	public function getSystemCategories() : array{ return $this->systemCategories; }
 
 	/**
 	 * @return WhiskerScopeDataSummary[]
@@ -184,9 +184,9 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 			$this->systemDiagnostics[] = SystemDiagnosticTimingInfo::read($in);
 		}
 
-		$this->systemCategory = [];
+		$this->systemCategories = [];
 		for($i = 0, $count = VarInt::readUnsignedInt($in); $i < $count; $i++){
-			$this->systemCategory[] = SystemCategory::read($in);
+			$this->systemCategories[] = SystemCategory::read($in);
 		}
 
 		$this->whiskerScopes = [];
@@ -221,8 +221,8 @@ class ServerboundDiagnosticsPacket extends DataPacket implements ServerboundPack
 			$value->write($out);
 		}
 
-		VarInt::writeUnsignedInt($out, count($this->systemCategory));
-		foreach($this->systemCategory as $value){
+		VarInt::writeUnsignedInt($out, count($this->systemCategories));
+		foreach($this->systemCategories as $value){
 			$value->write($out);
 		}
 

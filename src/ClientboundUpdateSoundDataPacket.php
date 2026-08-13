@@ -16,41 +16,42 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pmmp\encoding\ByteBufferReader;
 use pmmp\encoding\ByteBufferWriter;
-use pocketmine\network\mcpe\protocol\types\sound\ServerSoundHandle;
-use pocketmine\network\mcpe\protocol\types\sound\SoundControl;
+use pmmp\encoding\LE;
+use pocketmine\network\mcpe\protocol\types\sound\SoundDataUpdate;
 
-final class ClientboundUpdateSoundDataPacket extends DataPacket implements ClientboundPacket{
+class ClientboundUpdateSoundDataPacket extends DataPacket implements ClientboundPacket{
 	public const NETWORK_ID = ProtocolInfo::CLIENTBOUND_UPDATE_SOUND_DATA_PACKET;
 
-	private ServerSoundHandle $serverSoundHandle;
-	private SoundControl $soundControl;
+	private int $serverSoundHandle;
+	private SoundDataUpdate $update;
 
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(ServerSoundHandle $serverSoundHandle, SoundControl $soundControl) : self{
+	public static function create(int $serverSoundHandle, SoundDataUpdate $update) : self{
 		$result = new self;
 		$result->serverSoundHandle = $serverSoundHandle;
-		$result->soundControl = $soundControl;
+		$result->update = $update;
 		return $result;
 	}
 
-	public function getServerSoundHandle() : ServerSoundHandle{
+	public function getServerSoundHandle() : int{
 		return $this->serverSoundHandle;
 	}
 
-	public function getSoundControl() : SoundControl{
-		return $this->soundControl;
+	public function getUpdate() : SoundDataUpdate{
+		return $this->update;
 	}
 
 	protected function decodePayload(ByteBufferReader $in) : void{
-		$this->serverSoundHandle = ServerSoundHandle::read($in);
-		$this->soundControl = SoundControl::read($in);
+		$this->serverSoundHandle = LE::readUnsignedLong($in);
+		$this->update = SoundDataUpdate::read($in);
 	}
 
 	protected function encodePayload(ByteBufferWriter $out) : void{
-		$this->serverSoundHandle->write($out);
-		$this->soundControl->write($out);
+		LE::writeUnsignedLong($out, $this->serverSoundHandle);
+		LE::writeUnsignedInt($out, $this->update->getTypeId());
+		$this->update->write($out);
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

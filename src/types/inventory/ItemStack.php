@@ -66,10 +66,10 @@ final class ItemStack implements \JsonSerializable{
 
 	public function equalsWithoutCount(ItemStack $itemStack) : bool{
 		return
-		$this->id === $itemStack->id &&
-		$this->meta === $itemStack->meta &&
-		$this->blockRuntimeId === $itemStack->blockRuntimeId &&
-		$this->rawExtraData === $itemStack->rawExtraData;
+			$this->id === $itemStack->id &&
+			$this->meta === $itemStack->meta &&
+			$this->blockRuntimeId === $itemStack->blockRuntimeId &&
+			$this->rawExtraData === $itemStack->rawExtraData;
 	}
 
 	/** @return mixed[] */

@@ -21,6 +21,7 @@ use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
 use pocketmine\network\mcpe\protocol\types\biome\BiomeDefinitionData;
 use pocketmine\network\mcpe\protocol\types\biome\BiomeDefinitionEntry;
 use function array_map;
+use function array_values;
 use function count;
 
 class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
@@ -72,18 +73,18 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 		};
 
 		$definitionData = array_map(fn(BiomeDefinitionEntry $entry) => new BiomeDefinitionData(
-				$addString($entry->getBiomeName()),
-				$entry->getId(),
-				$entry->getTemperature(),
-				$entry->getDownfall(),
-				$entry->getFoliageSnow(),
-				$entry->getDepth(),
-				$entry->getScale(),
-				$entry->getMapWaterColor(),
-				$entry->hasRain(),
-				($v = $entry->getTags()) === null ? null : array_map($addString, $v),
-				$entry->getChunkGenData(),
-			), $definitions);
+			$addString($entry->getBiomeName()),
+			$entry->getId(),
+			$entry->getTemperature(),
+			$entry->getDownfall(),
+			$entry->getFoliageSnow(),
+			$entry->getDepth(),
+			$entry->getScale(),
+			$entry->getMapWaterColor(),
+			$entry->hasRain(),
+			($tags = $entry->getTags()) === null ? null : array_values(array_map($addString, $tags)),
+			$entry->getChunkGenData(),
+		), $definitions);
 
 		return self::create($definitionData, $strings);
 	}
@@ -105,18 +106,18 @@ class BiomeDefinitionListPacket extends DataPacket implements ClientboundPacket{
 	 */
 	public function buildDefinitionsFromData() : array{
 		return array_map(fn(BiomeDefinitionData $data) => new BiomeDefinitionEntry(
-				$this->locateString($data->getNameIndex()),
-				$data->getId(),
-				$data->getTemperature(),
-				$data->getDownfall(),
-				$data->getFoliageSnow(),
-				$data->getDepth(),
-				$data->getScale(),
-				$data->getMapWaterColor(),
-				$data->hasRain(),
-				($tagIndexes = $data->getTagIndexes()) === null ? null : array_map($this->locateString(...), $tagIndexes),
-				$data->getChunkGenData(),
-			), $this->definitionData);
+			$this->locateString($data->getNameIndex()),
+			$data->getId(),
+			$data->getTemperature(),
+			$data->getDownfall(),
+			$data->getFoliageSnow(),
+			$data->getDepth(),
+			$data->getScale(),
+			$data->getMapWaterColor(),
+			$data->hasRain(),
+			($tagIndexes = $data->getTagIndexes()) === null ? null : array_map($this->locateString(...), $tagIndexes),
+			$data->getChunkGenData(),
+		), $this->definitionData);
 	}
 
 	/**

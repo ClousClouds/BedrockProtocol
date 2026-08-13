@@ -16,8 +16,6 @@ namespace pocketmine\network\mcpe\protocol\types\skin;
 
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use Ramsey\Uuid\Uuid;
-use function hexdec;
-use function ltrim;
 
 class SkinData{
 
@@ -58,8 +56,8 @@ class SkinData{
 		private bool $personaCapeOnClassic = false,
 		private bool $isPrimaryUser = true,
 		private bool $override = true,
-		private string $trustedSkinFlag = self::TRUSTED_SKIN_FLAG_TRUE,
-		private string $profileHash = "",
+		private string $trustedSkinFlag = self::TRUSTED_SKIN_FLAG_UNSET,
+		private string $profileHash = ""
 	){
 		$this->capeImage = $capeImage ?? new SkinImage(0, 0, "");
 		//this has to be unique or the client will do stupid things
@@ -147,16 +145,12 @@ class SkinData{
 
 	public function isOverride() : bool{ return $this->override; }
 
+	public function getTrustedSkinFlag() : string{ return $this->trustedSkinFlag; }
+
+	public function getProfileHash() : string{ return $this->profileHash; }
+
 	public function isVerified() : bool{
 		return $this->isVerified;
-	}
-
-	public function getTrustedSkinFlag() : string{
-		return $this->trustedSkinFlag;
-	}
-
-	public function getProfileHash() : string{
-		return $this->profileHash;
 	}
 
 	/**
@@ -164,22 +158,5 @@ class SkinData{
 	 */
 	public function setVerified(bool $verified) : void{
 		$this->isVerified = $verified;
-	}
-
-	public static function convertArmSize(string $armSize) : int{
-		return match ($armSize) {
-			"slim" => SkinData::ARM_SIZE_SLIM,
-			"wide", "" => SkinData::ARM_SIZE_WIDE,
-			default => throw new \InvalidArgumentException("Unknown arm size \"$armSize\"")
-		};
-	}
-
-	public static function convertColor(string $color) : int{
-		$hex = ltrim($color, '#');
-		if($hex === '' || $hex === '0'){
-			return 0;
-		}
-
-		return (int) hexdec($hex);
 	}
 }

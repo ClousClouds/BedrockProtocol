@@ -26,7 +26,7 @@ final class ClientData{
 	public array $AnimatedImageData;
 
 	/** @required */
-	public int $ArmSize;
+	public string $ArmSize;
 
 	/** @required */
 	public string $CapeData;
@@ -42,12 +42,6 @@ final class ClientData{
 
 	/** @required */
 	public bool $CapeOnClassicSkin;
-
-	/** @required */
-	public int $ClientEditorConnectionIntent;
-
-	/** @required */
-	public bool $ClientIsEditorCapable;
 
 	/** @required */
 	public int $ClientRandomId;
@@ -81,6 +75,9 @@ final class ClientData{
 
 	/** @required */
 	public int $GuiScale;
+
+	/** @required */
+	public bool $ClientIsEditorCapable;
 
 	/** @required */
 	public string $LanguageCode;
@@ -125,6 +122,8 @@ final class ClientData{
 	/** @required */
 	public bool $PremiumSkin = false;
 
+	public string $ProfileHash = "";
+
 	/** @required */
 	public string $SelfSignedId;
 
@@ -135,7 +134,7 @@ final class ClientData{
 	public string $SkinAnimationData;
 
 	/** @required */
-	public int $SkinColor;
+	public string $SkinColor;
 
 	/** @required */
 	public string $SkinData;
@@ -168,5 +167,5 @@ final class ClientData{
 	public int $UIProfile;
 
 	/** @required */
-	public string $ProfileHash;
+	public int $ClientEditorConnectionIntent;
 }

@@ -18,20 +18,20 @@ use Ramsey\Uuid\UuidInterface;
 
 final class PersonaSkinPiece{
 
-	public const PIECE_TYPE_PERSONA_SKELETON = 0;
-	public const PIECE_TYPE_PERSONA_BODY = 1;
-	public const PIECE_TYPE_PERSONA_SKIN = 2;
-	public const PIECE_TYPE_PERSONA_BOTTOM = 3;
-	public const PIECE_TYPE_PERSONA_FEET = 4;
-	public const PIECE_TYPE_PERSONA_TOP = 6;
-	public const PIECE_TYPE_PERSONA_FACIAL_HAIR = 10;
-	public const PIECE_TYPE_PERSONA_MOUTH = 11;
-	public const PIECE_TYPE_PERSONA_EYES = 12;
-	public const PIECE_TYPE_PERSONA_HAIR = 13;
+	public const PIECE_TYPE_SKELETON = 0;
+	public const PIECE_TYPE_BODY = 1;
+	public const PIECE_TYPE_SKIN = 2;
+	public const PIECE_TYPE_BOTTOM = 3;
+	public const PIECE_TYPE_FEET = 4;
 	public const PIECE_TYPE_DRESS = 5;
+	public const PIECE_TYPE_TOP = 6;
 	public const PIECE_TYPE_HIGH_PANTS = 7;
 	public const PIECE_TYPE_HANDS = 8;
 	public const PIECE_TYPE_OUTERWEAR = 9;
+	public const PIECE_TYPE_FACIAL_HAIR = 10;
+	public const PIECE_TYPE_MOUTH = 11;
+	public const PIECE_TYPE_EYES = 12;
+	public const PIECE_TYPE_HAIR = 13;
 	public const PIECE_TYPE_HOOD = 14;
 	public const PIECE_TYPE_BACK = 15;
 	public const PIECE_TYPE_FACE_ACCESSORY = 16;
